@@ -10,7 +10,7 @@ const montserrat = Montserrat({
 })
 
 export const metadata: Metadata = {
-  title: 'SupaQuiz',
+  title: 'ICPG Quiz',
   description: 'OSS Kahoot Alternative powered by Supabase',
 }
 

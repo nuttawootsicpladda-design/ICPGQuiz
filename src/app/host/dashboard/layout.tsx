@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar'
 import DashboardNav from './DashboardNav'
 
 export const metadata: Metadata = {
-  title: 'SupaQuiz Dashboard',
+  title: 'ICPG Quiz Dashboard',
   description: 'Manage your quizzes and games',
 }
 

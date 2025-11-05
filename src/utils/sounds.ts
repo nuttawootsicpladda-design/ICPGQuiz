@@ -1,4 +1,4 @@
-// Sound Effects Manager for SupaQuiz
+// Sound Effects Manager for ICPG Quiz
 
 class SoundManager {
   private sounds: { [key: string]: HTMLAudioElement } = {}

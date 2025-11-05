@@ -52,7 +52,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-500 to-pink-500">
       <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">SupaQuiz</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">ICPG Quiz</h1>
           <p className="text-gray-600">Create your account</p>
         </div>
 

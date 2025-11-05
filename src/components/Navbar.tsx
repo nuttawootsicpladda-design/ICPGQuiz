@@ -20,7 +20,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <Link href="/host/dashboard" className="text-2xl font-bold hover:opacity-90">
-            SupaQuiz
+            ICPG Quiz
           </Link>
 
           <div className="flex items-center gap-4">

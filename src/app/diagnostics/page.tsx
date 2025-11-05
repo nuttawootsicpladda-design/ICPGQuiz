@@ -255,7 +255,7 @@ export default function DiagnosticsPage() {
             🔍 System Diagnostics
           </h1>
           <p className="text-gray-600 mb-8">
-            Checking SupaQuiz configuration and connectivity
+            Checking ICPG Quiz configuration and connectivity
           </p>
 
           {/* Summary */}
@@ -368,7 +368,7 @@ export default function DiagnosticsPage() {
                 🎉 All Systems Operational!
               </h2>
               <p className="text-sm text-green-800">
-                Your SupaQuiz installation is properly configured and ready to
+                Your ICPG Quiz installation is properly configured and ready to
                 use. You can start creating quizzes and hosting games!
               </p>
             </div>

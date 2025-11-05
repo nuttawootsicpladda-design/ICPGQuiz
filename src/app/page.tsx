@@ -20,7 +20,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">
         <div className="text-center text-white mb-16">
-          <h1 className="text-6xl font-bold mb-6">SupaQuiz</h1>
+          <h1 className="text-6xl font-bold mb-6">ICPG Quiz</h1>
           <p className="text-2xl mb-8 opacity-90">
             Create engaging quizzes and play live with your audience
           </p>
