@@ -65,6 +65,8 @@ Every time you push to GitHub:
 - ✅ Good Next.js support with plugin
 - ✅ Free tier available
 
+**⚠️ Note:** The `@netlify/plugin-nextjs` is already configured in this project.
+
 ### Steps
 
 #### 1. Push to GitHub
@@ -82,9 +84,9 @@ git push -u origin main
 2. Sign in with GitHub
 3. Click **"Add new site"** → **"Import an existing project"**
 4. Choose **GitHub** and select your repository
-5. Build settings (should auto-detect):
+5. Build settings (should auto-detect from `netlify.toml`):
    - Build command: `npm run build`
-   - Publish directory: `.next`
+   - **Leave "Publish directory" EMPTY** (plugin will handle this)
 6. Add Environment Variables:
    - Click **"Show advanced"** → **"New variable"**
    - Add:
@@ -98,12 +100,12 @@ git push -u origin main
 
 Your app will be live at: `https://your-site-name.netlify.app`
 
-### Install Next.js Plugin (if not auto-installed)
+### Important Notes
 
-If deployment fails, manually add the Next.js plugin:
-1. Go to **Site settings** → **Plugins**
-2. Search for **"Next.js Runtime"**
-3. Install and redeploy
+- ✅ **DO NOT** set publish directory to `.next`
+- ✅ `@netlify/plugin-nextjs` is already installed
+- ✅ `netlify.toml` is already configured correctly
+- ✅ The plugin will automatically handle Next.js build output
 
 ---
 
