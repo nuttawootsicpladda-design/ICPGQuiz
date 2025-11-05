@@ -1,8 +1,9 @@
 import { TIME_TIL_CHOICE_REVEAL } from '@/constants'
-import { Answer, Participant, Question, QuizSet, supabase } from '@/types/types'
+import { Answer, Participant, Question, QuizSet, supabase, GameResult } from '@/types/types'
 import { useEffect, useRef, useState } from 'react'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { getThemeById, DEFAULT_THEME, getAnswerButtonClass } from '@/utils/themes'
+import { AvatarDisplay } from '@/components/AvatarPicker'
 
 export default function Quiz({
   question: question,
@@ -25,6 +26,8 @@ export default function Quiz({
   const [answers, setAnswers] = useState<Answer[]>([])
 
   const [countdown, setCountdown] = useState<number | null>(null)
+
+  const [top5Leaderboard, setTop5Leaderboard] = useState<GameResult[]>([])
 
   const answerStateRef = useRef<Answer[]>()
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -59,6 +62,18 @@ export default function Quiz({
         is_answer_revealed: true,
       })
       .eq('id', gameId)
+
+    // Fetch top 5 leaderboard
+    const { data: leaderboardData } = await supabase
+      .from('game_results')
+      .select()
+      .eq('game_id', gameId)
+      .order('total_score', { ascending: false })
+      .limit(5)
+
+    if (leaderboardData) {
+      setTop5Leaderboard(leaderboardData)
+    }
 
     // Start auto-advance countdown
     const autoAdvanceTime = (quizSet as any).auto_advance_time || 0
@@ -193,36 +208,76 @@ export default function Quiz({
           </div>
         )}
         {isAnswerRevealed && (
-          <div className="flex justify-center gap-1 sm:gap-2">
-            {question.choices.map((choice, index) => (
-              <div
-                key={choice.id}
-                className="mx-0.5 sm:mx-1 md:mx-2 h-32 sm:h-40 md:h-48 w-16 sm:w-20 md:w-24 flex flex-col items-stretch justify-end"
-              >
-                <div className="flex-grow relative">
-                  <div
-                    style={{
-                      height: `${
-                        (answers.filter(
-                          (answer) => answer.choice_id === choice.id
-                        ).length *
-                          100) /
-                        (answers.length || 1)
-                      }%`,
-                    }}
-                    className={`absolute bottom-0 left-0 right-0 mb-1 rounded-t ${getAnswerButtonClass(index, (quizSet as any).theme_id).split(' ')[0]}`}
-                  ></div>
-                </div>
+          <div className="space-y-4">
+            <div className="flex justify-center gap-1 sm:gap-2">
+              {question.choices.map((choice, index) => (
                 <div
-                  className={`mt-1 text-white text-sm sm:text-base md:text-lg text-center py-1 sm:py-2 rounded-b ${getAnswerButtonClass(index, (quizSet as any).theme_id).split(' ')[0]}`}
+                  key={choice.id}
+                  className="mx-0.5 sm:mx-1 md:mx-2 h-32 sm:h-40 md:h-48 w-16 sm:w-20 md:w-24 flex flex-col items-stretch justify-end"
                 >
-                  {
-                    answers.filter((answer) => answer.choice_id === choice.id)
-                      .length
-                  }
+                  <div className="flex-grow relative">
+                    <div
+                      style={{
+                        height: `${
+                          (answers.filter(
+                            (answer) => answer.choice_id === choice.id
+                          ).length *
+                            100) /
+                          (answers.length || 1)
+                        }%`,
+                      }}
+                      className={`absolute bottom-0 left-0 right-0 mb-1 rounded-t ${getAnswerButtonClass(index, (quizSet as any).theme_id).split(' ')[0]}`}
+                    ></div>
+                  </div>
+                  <div
+                    className={`mt-1 text-white text-sm sm:text-base md:text-lg text-center py-1 sm:py-2 rounded-b ${getAnswerButtonClass(index, (quizSet as any).theme_id).split(' ')[0]}`}
+                  >
+                    {
+                      answers.filter((answer) => answer.choice_id === choice.id)
+                        .length
+                    }
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Top 5 Leaderboard */}
+            {top5Leaderboard.length > 0 && (
+              <div className="mt-6 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-white text-xl sm:text-2xl font-bold mb-3 text-center">🏆 Top 5</h3>
+                <div className="space-y-2">
+                  {top5Leaderboard.map((result, index) => {
+                    const participant = participants.find(p => p.id === result.participant_id)
+                    return (
+                      <div
+                        key={result.participant_id}
+                        className={`flex items-center justify-between px-3 py-2 rounded-lg ${
+                          index < 3 ? 'bg-yellow-400 bg-opacity-90' : 'bg-white bg-opacity-80'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <div className={`${index < 3 ? 'text-2xl' : 'text-xl'} font-bold flex-shrink-0`}>
+                            {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`}
+                          </div>
+                          <div className="flex-shrink-0">
+                            <AvatarDisplay
+                              avatarId={(participant as any)?.avatar_id}
+                              size="sm"
+                            />
+                          </div>
+                          <div className="font-bold truncate text-gray-800 text-sm sm:text-base">
+                            {result.nickname}
+                          </div>
+                        </div>
+                        <div className="text-lg sm:text-xl font-bold text-purple-600 flex-shrink-0 ml-2">
+                          {result.total_score}
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>
