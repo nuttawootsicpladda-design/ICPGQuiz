@@ -3,6 +3,15 @@ import { on } from 'events'
 import { FormEvent, useEffect, useState } from 'react'
 import AvatarPicker from '@/components/AvatarPicker'
 import { getRandomAvatar } from '@/utils/avatars'
+import LiveChat from '@/components/LiveChat'
+import LiveReactions from '@/components/LiveReactions'
+import TeamSelector from '@/components/TeamSelector'
+
+interface Game {
+  id: string
+  team_mode: boolean
+  max_teams: number
+}
 
 export default function Lobby({
   gameId,
@@ -12,9 +21,24 @@ export default function Lobby({
   onRegisterCompleted: (participant: Participant) => void
 }) {
   const [participant, setParticipant] = useState<Participant | null>(null)
+  const [game, setGame] = useState<Game | null>(null)
 
   useEffect(() => {
-    const fetchParticipant = async () => {
+    const fetchGameAndParticipant = async () => {
+      // Load game settings
+      const { data: gameData, error: gameError } = await supabase
+        .from('games')
+        .select('id, team_mode, max_teams')
+        .eq('id', gameId)
+        .single()
+
+      if (gameError) {
+        console.error('Game fetch error:', gameError)
+      } else {
+        setGame(gameData as Game)
+      }
+
+      // Load participant
       let userId: string | null = null
 
       const { data: sessionData, error: sessionError } =
@@ -49,7 +73,7 @@ export default function Lobby({
       }
     }
 
-    fetchParticipant()
+    fetchGameAndParticipant()
   }, [gameId, onRegisterCompleted])
 
   return (
@@ -57,10 +81,20 @@ export default function Lobby({
       className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat px-4 py-8"
       style={{ backgroundImage: "url('/BGlobby.jpg')" }}
     >
-      <div className="bg-white bg-opacity-95 p-6 sm:p-8 md:p-12 rounded-2xl shadow-2xl backdrop-blur-lg w-full max-w-md">
-        {!participant && (
+      {/* Reactions Overlay (only show when registered) */}
+      {participant && (
+        <LiveReactions
+          gameId={gameId}
+          participantId={participant.id}
+          showPicker={true}
+        />
+      )}
+
+      <div className={`bg-white bg-opacity-95 p-6 sm:p-8 md:p-12 rounded-2xl shadow-2xl backdrop-blur-lg w-full ${participant ? 'max-w-4xl' : 'max-w-md'}`}>
+        {!participant && game && (
           <Register
             gameId={gameId}
+            game={game}
             onRegisterCompleted={(participant) => {
               onRegisterCompleted(participant)
               setParticipant(participant)
@@ -68,14 +102,67 @@ export default function Lobby({
           />
         )}
 
-        {participant && (
-          <div className="text-gray-800 w-full">
-            <h1 className="text-2xl sm:text-3xl pb-4 font-bold text-orange-600">Welcome {participant.nickname}！</h1>
-            <p className="text-base sm:text-lg">
-              You have been registered and your nickname should show up on the
-              admin screen. Please sit back and wait until the game master
-              starts the game.
-            </p>
+        {participant && game && (
+          <div className="text-gray-800 w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Welcome Message & Team Selector */}
+            <div>
+              <h1 className="text-2xl sm:text-3xl pb-4 font-bold text-orange-600">
+                Welcome {participant.nickname}! 🎉
+              </h1>
+              <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4 mb-4">
+                <p className="text-base sm:text-lg text-gray-700">
+                  ✅ You're registered!<br />
+                  🎮 Waiting for host to start...<br />
+                  💬 Chat with other players below!
+                </p>
+              </div>
+
+              {/* Team Selector (if team mode enabled) */}
+              {game.team_mode && (
+                <div className="mb-4">
+                  <TeamSelector
+                    gameId={gameId}
+                    maxTeams={game.max_teams as 2 | 3 | 4}
+                    selectedTeam={(participant as any).team_id}
+                    onTeamSelected={async (teamId) => {
+                      // Update participant's team
+                      const { error } = await supabase
+                        .from('participants')
+                        .update({ team_id: teamId })
+                        .eq('id', participant.id)
+
+                      if (error) {
+                        console.error('Error updating team:', error)
+                        alert('Failed to join team')
+                      } else {
+                        // Update local state
+                        setParticipant({ ...participant, team_id: teamId } as any)
+                      }
+                    }}
+                  />
+                </div>
+              )}
+
+              <div className="text-sm text-gray-600 bg-purple-50 border-2 border-purple-300 rounded-lg p-3">
+                <p className="font-semibold mb-1">💡 Tips:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  {game.team_mode && <li>Choose your team above! 🏆</li>}
+                  <li>Send reactions with the emoji button 😊</li>
+                  <li>Chat with other players</li>
+                  <li>Get ready for the quiz!</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Live Chat */}
+            <div>
+              <LiveChat
+                gameId={gameId}
+                participantId={participant.id}
+                participantNickname={participant.nickname}
+                participantAvatar={(participant as any).avatar_id}
+              />
+            </div>
           </div>
         )}
       </div>
@@ -86,9 +173,11 @@ export default function Lobby({
 function Register({
   onRegisterCompleted,
   gameId,
+  game,
 }: {
   onRegisterCompleted: (player: Participant) => void
   gameId: string
+  game: Game
 }) {
   const [nickname, setNickname] = useState('')
   const [avatarId, setAvatarId] = useState('cat') // Fixed default to prevent hydration mismatch

@@ -6,7 +6,20 @@
       "Bash(npm run dev:*)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(if [ -d .next ])",
+      "Bash(then echo \"Build succeeded - .next directory exists\")",
+      "Bash(else echo \"Build failed - no .next directory\")",
+      "Bash(fi)",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(git remote add:*)",
+      "Bash(git reset:*)",
+      "Bash(tree:*)",
+      "Bash(if exist .next rmdir /s /q .next)"
     ],
     "deny": [],
     "ask": []

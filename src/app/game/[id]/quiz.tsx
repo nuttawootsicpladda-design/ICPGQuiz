@@ -1,26 +1,34 @@
 import { QUESTION_ANSWER_TIME, TIME_TIL_CHOICE_REVEAL } from '@/constants'
-import { Choice, Question, supabase } from '@/types/types'
+import { Choice, Question, supabase, GameResult, Participant } from '@/types/types'
 import { useState, useEffect } from 'react'
 import { ColorFormat, CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { playSound } from '@/utils/sounds'
 import SoundControl from '@/components/SoundControl'
+import LiveReactions from '@/components/LiveReactions'
+import VerticalLeaderboard from '@/components/VerticalLeaderboard'
 
 export default function Quiz({
   question: question,
   questionCount: questionCount,
   participantId: playerId,
   isAnswerRevealed,
+  gameId,
 }: {
   question: Question
   questionCount: number
   participantId: string
   isAnswerRevealed: boolean
+  gameId?: string
 }) {
   const [chosenChoice, setChosenChoice] = useState<Choice | null>(null)
 
   const [hasShownChoices, setHasShownChoices] = useState(false)
 
   const [questionStartTime, setQuestionStartTime] = useState(Date.now())
+
+  const [leaderboard, setLeaderboard] = useState<GameResult[]>([])
+
+  const [participants, setParticipants] = useState<Participant[]>([])
 
   useEffect(() => {
     setChosenChoice(null)
@@ -35,8 +43,38 @@ export default function Quiz({
       } else {
         playSound('wrong')
       }
+
+      // Fetch leaderboard and participants when answer is revealed
+      if (gameId) {
+        fetchLeaderboard()
+      }
     }
   }, [isAnswerRevealed, chosenChoice])
+
+  const fetchLeaderboard = async () => {
+    if (!gameId) return
+
+    // Fetch all game results for leaderboard
+    const { data: leaderboardData } = await supabase
+      .from('game_results')
+      .select()
+      .eq('game_id', gameId)
+      .order('total_score', { ascending: false })
+
+    if (leaderboardData) {
+      setLeaderboard(leaderboardData)
+    }
+
+    // Fetch participants for avatar display
+    const { data: participantsData } = await supabase
+      .from('participants')
+      .select()
+      .eq('game_id', gameId)
+
+    if (participantsData) {
+      setParticipants(participantsData)
+    }
+  }
 
   const answer = async (choice: Choice) => {
     setChosenChoice(choice)
@@ -67,6 +105,15 @@ export default function Quiz({
   return (
     <div className="h-screen flex flex-col items-stretch bg-slate-900 relative">
       <SoundControl />
+
+      {/* Live Reactions */}
+      {gameId && (
+        <LiveReactions
+          gameId={gameId}
+          participantId={playerId}
+          showPicker={true}
+        />
+      )}
 
       <div className="flex-grow flex justify-center items-center text-center px-4 py-4">
         <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl bg-white font-bold p-4 sm:p-6 md:p-8 lg:p-12 rounded inline-block max-w-5xl">
@@ -167,46 +214,62 @@ export default function Quiz({
       )}
 
       {isAnswerRevealed && (
-        <div className="flex-grow flex justify-center items-center flex-col p-4">
-          <h2 className="text-white text-xl sm:text-2xl md:text-3xl text-center pb-4 font-bold">
-            {chosenChoice?.is_correct ? '🎉 Correct!' : '❌ Incorrect'}
-          </h2>
-          <div
-            className={`text-white rounded-full p-4 sm:p-6 md:p-8 ${
-              chosenChoice?.is_correct ? 'bg-green-500' : 'bg-red-500'
-            }`}
-          >
-            {chosenChoice?.is_correct && (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={5}
-                stroke="currentColor"
-                className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16"
+        <div className="flex-grow overflow-y-auto p-4">
+          <div className="flex flex-col items-center gap-4">
+            {/* Answer Result */}
+            <div className="text-center">
+              <h2 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-3">
+                {chosenChoice?.is_correct ? '🎉 Correct!' : '❌ Incorrect'}
+              </h2>
+              <div
+                className={`inline-block text-white rounded-full p-4 sm:p-6 ${
+                  chosenChoice?.is_correct ? 'bg-green-500' : 'bg-red-500'
+                }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m4.5 12.75 6 6 9-13.5"
+                {chosenChoice?.is_correct && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={5}
+                    stroke="currentColor"
+                    className="w-8 h-8 sm:w-12 sm:h-12"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m4.5 12.75 6 6 9-13.5"
+                    />
+                  </svg>
+                )}
+                {!chosenChoice?.is_correct && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={5}
+                    stroke="currentColor"
+                    className="w-8 h-8 sm:w-12 sm:h-12"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18 18 6M6 6l12 12"
+                    />
+                  </svg>
+                )}
+              </div>
+            </div>
+
+            {/* Vertical Leaderboard */}
+            {leaderboard.length > 0 && (
+              <div className="w-full mt-4">
+                <VerticalLeaderboard
+                  gameResults={leaderboard}
+                  participants={participants}
+                  maxDisplay={8}
                 />
-              </svg>
-            )}
-            {!chosenChoice?.is_correct && (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={5}
-                stroke="currentColor"
-                className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18 18 6M6 6l12 12"
-                />
-              </svg>
+              </div>
             )}
           </div>
         </div>

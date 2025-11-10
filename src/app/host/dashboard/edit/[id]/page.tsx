@@ -31,7 +31,11 @@ export default function EditQuizPage() {
 
   const [quizName, setQuizName] = useState('')
   const [quizDescription, setQuizDescription] = useState('')
+  const [autoAdvanceTime, setAutoAdvanceTime] = useState(5)
   const [isPublic, setIsPublic] = useState(true)
+  const [teamMode, setTeamMode] = useState(false)
+  const [maxTeams, setMaxTeams] = useState(2)
+  const [autoRead, setAutoRead] = useState(false)
   const [questions, setQuestions] = useState<Question[]>([])
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -72,7 +76,11 @@ export default function EditQuizPage() {
 
     setQuizName(data.name)
     setQuizDescription(data.description || '')
+    setAutoAdvanceTime((data as any).auto_advance_time ?? 5)
     setIsPublic(data.is_public)
+    setTeamMode((data as any).team_mode ?? false)
+    setMaxTeams((data as any).max_teams ?? 2)
+    setAutoRead((data as any).auto_read ?? false)
 
     // Sort questions and choices
     const sortedQuestions = data.questions
@@ -189,7 +197,11 @@ export default function EditQuizPage() {
         .update({
           name: quizName,
           description: quizDescription,
+          auto_advance_time: autoAdvanceTime,
           is_public: isPublic,
+          team_mode: teamMode,
+          max_teams: teamMode ? maxTeams : 2,
+          auto_read: autoRead,
         })
         .eq('id', quizId)
 
@@ -270,6 +282,34 @@ export default function EditQuizPage() {
             />
           </div>
 
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Auto-Advance Timer ⏱️
+            </label>
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min="0"
+                max="30"
+                value={autoAdvanceTime}
+                onChange={(e) => setAutoAdvanceTime(parseInt(e.target.value))}
+                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+              />
+              <div className="w-32 text-center">
+                {autoAdvanceTime === 0 ? (
+                  <span className="text-sm font-semibold text-gray-600">Manual</span>
+                ) : (
+                  <span className="text-lg font-bold text-purple-600">{autoAdvanceTime}s</span>
+                )}
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              {autoAdvanceTime === 0
+                ? '⚠️ Manual mode: Click "Next" button to continue'
+                : `✨ Auto-advance to next question after ${autoAdvanceTime} seconds`}
+            </p>
+          </div>
+
           <div className="flex items-center">
             <input
               type="checkbox"
@@ -281,6 +321,61 @@ export default function EditQuizPage() {
             <label htmlFor="isPublic" className="ml-2 text-gray-700">
               Make this quiz public (anyone can play)
             </label>
+          </div>
+
+          {/* Team Mode */}
+          <div className="border-t pt-4 mt-2">
+            <div className="flex items-center mb-3">
+              <input
+                type="checkbox"
+                id="teamMode"
+                checked={teamMode}
+                onChange={(e) => setTeamMode(e.target.checked)}
+                className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
+              />
+              <label htmlFor="teamMode" className="ml-2 text-gray-700 font-semibold">
+                🏆 Enable Team Mode
+              </label>
+            </div>
+
+            {teamMode && (
+              <div className="ml-7 pl-3 border-l-4 border-purple-200">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Number of Teams
+                </label>
+                <select
+                  value={maxTeams}
+                  onChange={(e) => setMaxTeams(parseInt(e.target.value))}
+                  className="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                >
+                  <option value={2}>2 Teams</option>
+                  <option value={3}>3 Teams</option>
+                  <option value={4}>4 Teams</option>
+                </select>
+                <p className="text-sm text-gray-500 mt-2">
+                  Players will be divided into teams and compete together
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Auto-Read Questions */}
+          <div className="border-t pt-4 mt-2">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="autoRead"
+                checked={autoRead}
+                onChange={(e) => setAutoRead(e.target.checked)}
+                className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
+              />
+              <label htmlFor="autoRead" className="ml-2 text-gray-700 font-semibold">
+                🔊 Auto-Read Questions Aloud
+              </label>
+            </div>
+            <p className="text-sm text-gray-500 mt-2 ml-7">
+              AI will automatically read each question aloud using text-to-speech
+            </p>
           </div>
         </div>
       </div>

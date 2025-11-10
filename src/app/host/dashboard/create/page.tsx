@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/types/types'
 import { useRouter } from 'next/navigation'
 import ThemePicker from '@/components/ThemePicker'
+import AIQuizGenerator from '@/components/AIQuizGenerator'
 
 interface Question {
   id: string
@@ -32,6 +33,9 @@ export default function CreateQuizPage() {
   const [themeId, setThemeId] = useState('classic')
   const [autoAdvanceTime, setAutoAdvanceTime] = useState(5)
   const [isPublic, setIsPublic] = useState(true)
+  const [teamMode, setTeamMode] = useState(false)
+  const [maxTeams, setMaxTeams] = useState(2)
+  const [autoRead, setAutoRead] = useState(false)
   const [questions, setQuestions] = useState<Question[]>([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -99,6 +103,16 @@ export default function CreateQuizPage() {
     setQuestions(updated)
   }
 
+  const handleAIQuestionsGenerated = (aiQuestions: Question[]) => {
+    // Add AI-generated questions to existing questions
+    const startOrder = questions.length
+    const questionsWithOrder = aiQuestions.map((q, index) => ({
+      ...q,
+      order: startOrder + index,
+    }))
+    setQuestions([...questions, ...questionsWithOrder])
+  }
+
   const handleSave = async () => {
     if (!quizName.trim()) {
       setError('Quiz name is required')
@@ -143,6 +157,12 @@ export default function CreateQuizPage() {
           name: quizName,
           description: quizDescription,
           user_id: user.id,
+          auto_advance_time: autoAdvanceTime,
+          is_public: isPublic,
+          theme_id: themeId,
+          team_mode: teamMode,
+          max_teams: teamMode ? maxTeams : 2,
+          auto_read: autoRead,
         })
         .select()
         .single()
@@ -260,6 +280,61 @@ export default function CreateQuizPage() {
               Make this quiz public (anyone can play)
             </label>
           </div>
+
+          {/* Team Mode */}
+          <div className="border-t pt-4 mt-2">
+            <div className="flex items-center mb-3">
+              <input
+                type="checkbox"
+                id="teamMode"
+                checked={teamMode}
+                onChange={(e) => setTeamMode(e.target.checked)}
+                className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 rounded focus:ring-purple-500 flex-shrink-0"
+              />
+              <label htmlFor="teamMode" className="ml-2 text-gray-700 text-sm sm:text-base font-semibold">
+                🏆 Enable Team Mode
+              </label>
+            </div>
+
+            {teamMode && (
+              <div className="ml-7 pl-3 border-l-4 border-purple-200">
+                <label className="block text-gray-700 text-sm sm:text-base font-medium mb-2">
+                  Number of Teams
+                </label>
+                <select
+                  value={maxTeams}
+                  onChange={(e) => setMaxTeams(parseInt(e.target.value))}
+                  className="w-full sm:w-48 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                >
+                  <option value={2}>2 Teams</option>
+                  <option value={3}>3 Teams</option>
+                  <option value={4}>4 Teams</option>
+                </select>
+                <p className="text-xs sm:text-sm text-gray-500 mt-2">
+                  Players will be divided into teams and compete together
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Auto-Read Questions */}
+          <div className="border-t pt-4 mt-2">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="autoRead"
+                checked={autoRead}
+                onChange={(e) => setAutoRead(e.target.checked)}
+                className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 rounded focus:ring-purple-500 flex-shrink-0"
+              />
+              <label htmlFor="autoRead" className="ml-2 text-gray-700 text-sm sm:text-base font-semibold">
+                🔊 Auto-Read Questions Aloud
+              </label>
+            </div>
+            <p className="text-xs sm:text-sm text-gray-500 mt-2 ml-7">
+              AI will automatically read each question aloud using text-to-speech
+            </p>
+          </div>
         </div>
       </div>
 
@@ -267,15 +342,18 @@ export default function CreateQuizPage() {
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
           <h2 className="text-lg sm:text-xl font-bold">Questions ({questions.length})</h2>
-          <button
-            onClick={addQuestion}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition active:scale-95"
-          >
-            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            <span className="text-sm sm:text-base">Add Question</span>
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <AIQuizGenerator onQuestionsGenerated={handleAIQuestionsGenerated} />
+            <button
+              onClick={addQuestion}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition active:scale-95"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="text-sm sm:text-base">Add Question</span>
+            </button>
+          </div>
         </div>
 
         {questions.map((question, qIndex) => (

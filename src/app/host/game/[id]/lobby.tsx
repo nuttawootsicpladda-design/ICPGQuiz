@@ -1,10 +1,11 @@
 import { Participant, QuizSet, supabase } from '@/types/types'
 import { useQRCode } from 'next-qrcode'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { playSound, playMusic, stopMusic } from '@/utils/sounds'
 import SoundControl from '@/components/SoundControl'
 import { AvatarDisplay } from '@/components/AvatarPicker'
 import { getThemeById, DEFAULT_THEME } from '@/utils/themes'
+import HostLiveChat from '@/components/HostLiveChat'
 
 export default function Lobby({
   participants: participants,
@@ -18,6 +19,18 @@ export default function Lobby({
   const theme = getThemeById((quizSet as any).theme_id) || DEFAULT_THEME
   const { Canvas } = useQRCode()
   const previousParticipantCount = useRef(participants.length)
+  const [hostUserId, setHostUserId] = useState<string>('')
+
+  // Get host user ID
+  useEffect(() => {
+    const getHostUserId = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setHostUserId(user.id)
+      }
+    }
+    getHostUserId()
+  }, [])
 
   useEffect(() => {
     // Play lobby music when component mounts
@@ -57,11 +70,12 @@ export default function Lobby({
     >
       <SoundControl />
 
-      <div className="flex flex-col lg:flex-row justify-between gap-6 lg:gap-12 m-auto bg-white bg-opacity-95 backdrop-blur-lg p-6 sm:p-8 lg:p-12 rounded-2xl shadow-2xl border-2 sm:border-4 border-orange-400 w-full max-w-6xl">
-        <div className="w-full lg:w-96">
+      <div className="flex flex-col lg:flex-row justify-between gap-6 m-auto bg-white bg-opacity-95 backdrop-blur-lg p-6 sm:p-8 rounded-2xl shadow-2xl border-2 sm:border-4 border-orange-400 w-full max-w-7xl">
+        {/* Left Column: Players List */}
+        <div className="w-full lg:w-80 xl:w-96">
           <h2 className="text-2xl sm:text-3xl font-bold text-orange-600 mb-4 sm:mb-6">Waiting for Players...</h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 pb-6 min-h-32 gap-2 sm:gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 pb-6 min-h-32 gap-2 sm:gap-3 max-h-96 overflow-y-auto">
             {participants.map((participant) => (
               <div
                 className="flex items-center gap-2 p-2 sm:p-3 bg-white rounded-lg shadow-md animate-bounce-in"
@@ -93,7 +107,8 @@ export default function Lobby({
           </button>
         </div>
 
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-xl border-2 sm:border-4 border-yellow-400 mx-auto">
+        {/* Middle Column: QR Code */}
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-xl border-2 sm:border-4 border-yellow-400">
           <p className="text-center font-bold text-orange-600 text-lg sm:text-xl mb-3 sm:mb-4">📱 Scan to Join!</p>
           <div className="flex justify-center">
             <Canvas
@@ -102,7 +117,7 @@ export default function Lobby({
                 errorCorrectionLevel: 'M',
                 margin: 3,
                 scale: 4,
-                width: typeof window !== 'undefined' && window.innerWidth < 640 ? 200 : 300,
+                width: typeof window !== 'undefined' && window.innerWidth < 640 ? 200 : 250,
               }}
             />
           </div>
@@ -112,6 +127,16 @@ export default function Lobby({
           <p className="text-center text-xs text-gray-500 mt-1">
             Game PIN: <span className="font-mono font-bold text-orange-600">{gameId.slice(0, 6)}...</span>
           </p>
+        </div>
+
+        {/* Right Column: Live Chat */}
+        <div className="w-full lg:w-96 xl:w-[450px]">
+          {hostUserId && (
+            <HostLiveChat
+              gameId={gameId}
+              hostUserId={hostUserId}
+            />
+          )}
         </div>
       </div>
     </div>

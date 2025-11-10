@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { getThemeById, DEFAULT_THEME, getAnswerButtonClass } from '@/utils/themes'
 import { AvatarDisplay } from '@/components/AvatarPicker'
+import VerticalLeaderboard from '@/components/VerticalLeaderboard'
+import { useTextToSpeech } from '@/hooks/useTextToSpeech'
 
 export default function Quiz({
   question: question,
@@ -27,10 +29,17 @@ export default function Quiz({
 
   const [countdown, setCountdown] = useState<number | null>(null)
 
-  const [top5Leaderboard, setTop5Leaderboard] = useState<GameResult[]>([])
+  const [leaderboard, setLeaderboard] = useState<GameResult[]>([])
 
   const answerStateRef = useRef<Answer[]>()
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Text-to-Speech
+  const { speak, stop, isSpeaking, isSupported } = useTextToSpeech({
+    rate: 1.0,
+    pitch: 1.0,
+    volume: 1.0,
+  })
 
   answerStateRef.current = answers
 
@@ -63,16 +72,15 @@ export default function Quiz({
       })
       .eq('id', gameId)
 
-    // Fetch top 5 leaderboard
+    // Fetch all game results for leaderboard
     const { data: leaderboardData } = await supabase
       .from('game_results')
       .select()
       .eq('game_id', gameId)
       .order('total_score', { ascending: false })
-      .limit(5)
 
     if (leaderboardData) {
-      setTop5Leaderboard(leaderboardData)
+      setLeaderboard(leaderboardData)
     }
 
     // Start auto-advance countdown
@@ -119,6 +127,17 @@ export default function Quiz({
       countdownIntervalRef.current = null
     }
 
+    // Stop any ongoing speech
+    stop()
+
+    // Auto-read question after a short delay (check if auto_read is enabled in quiz settings)
+    const autoRead = (quizSet as any).auto_read ?? false
+    if (autoRead && isSupported) {
+      setTimeout(() => {
+        speak(question.body)
+      }, 1000) // Wait 1 second before reading
+    }
+
     setTimeout(() => {
       setHasShownChoices(true)
     }, TIME_TIL_CHOICE_REVEAL)
@@ -156,6 +175,27 @@ export default function Quiz({
   return (
     <div className={`h-screen flex flex-col items-stretch ${theme.gameBg} relative`}>
       <div className="absolute right-2 sm:right-4 top-2 sm:top-4 flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3 z-10">
+        {/* Text-to-Speech Button */}
+        {isSupported && !isAnswerRevealed && (
+          <button
+            className={`px-3 sm:px-4 py-1 sm:py-2 font-semibold text-sm sm:text-base rounded-lg transition shadow-lg active:scale-95 ${
+              isSpeaking
+                ? 'bg-orange-500 text-white animate-pulse'
+                : 'bg-white text-gray-800 hover:bg-gray-100'
+            }`}
+            onClick={() => {
+              if (isSpeaking) {
+                stop()
+              } else {
+                speak(question.body)
+              }
+            }}
+            title={isSpeaking ? 'Stop Reading' : 'Read Question Aloud'}
+          >
+            {isSpeaking ? '🔇 Stop' : '🔊 Read'}
+          </button>
+        )}
+
         {isAnswerRevealed && countdown !== null && countdown > 0 && (
           <div className="bg-purple-600 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-lg font-bold text-sm sm:text-base md:text-lg flex items-center gap-2">
             <span>⏱️</span>
@@ -166,6 +206,8 @@ export default function Quiz({
           <button
             className="px-3 sm:px-4 py-1 sm:py-2 bg-white text-black font-semibold text-sm sm:text-base rounded-lg hover:bg-gray-200 transition shadow-lg active:scale-95"
             onClick={() => {
+              // Stop speech if playing
+              stop()
               // Clear countdown and go to next
               if (countdownIntervalRef.current) {
                 clearInterval(countdownIntervalRef.current)
@@ -241,41 +283,14 @@ export default function Quiz({
               ))}
             </div>
 
-            {/* Top 5 Leaderboard */}
-            {top5Leaderboard.length > 0 && (
-              <div className="mt-6 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-white text-xl sm:text-2xl font-bold mb-3 text-center">🏆 Top 5</h3>
-                <div className="space-y-2">
-                  {top5Leaderboard.map((result, index) => {
-                    const participant = participants.find(p => p.id === result.participant_id)
-                    return (
-                      <div
-                        key={result.participant_id}
-                        className={`flex items-center justify-between px-3 py-2 rounded-lg ${
-                          index < 3 ? 'bg-yellow-400 bg-opacity-90' : 'bg-white bg-opacity-80'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className={`${index < 3 ? 'text-2xl' : 'text-xl'} font-bold flex-shrink-0`}>
-                            {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`}
-                          </div>
-                          <div className="flex-shrink-0">
-                            <AvatarDisplay
-                              avatarId={(participant as any)?.avatar_id}
-                              size="sm"
-                            />
-                          </div>
-                          <div className="font-bold truncate text-gray-800 text-sm sm:text-base">
-                            {result.nickname}
-                          </div>
-                        </div>
-                        <div className="text-lg sm:text-xl font-bold text-purple-600 flex-shrink-0 ml-2">
-                          {result.total_score}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
+            {/* Vertical Leaderboard */}
+            {leaderboard.length > 0 && (
+              <div className="mt-6">
+                <VerticalLeaderboard
+                  gameResults={leaderboard}
+                  participants={participants}
+                  maxDisplay={10}
+                />
               </div>
             )}
           </div>

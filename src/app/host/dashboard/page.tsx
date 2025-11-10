@@ -43,10 +43,26 @@ export default function DashboardPage() {
   }
 
   const startGame = async (quizSetId: string) => {
+    // First, get the quiz set details to copy team mode settings
+    const { data: quizSet, error: quizError } = await supabase
+      .from('quiz_sets')
+      .select('team_mode, max_teams')
+      .eq('id', quizSetId)
+      .single()
+
+    if (quizError) {
+      console.error(quizError)
+      alert('Failed to load quiz settings')
+      return
+    }
+
+    // Create game with team mode settings from quiz set
     const { data, error } = await supabase
       .from('games')
       .insert({
         quiz_set_id: quizSetId,
+        team_mode: (quizSet as any).team_mode || false,
+        max_teams: (quizSet as any).max_teams || 2,
       })
       .select()
       .single()
