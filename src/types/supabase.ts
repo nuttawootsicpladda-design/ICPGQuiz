@@ -269,6 +269,9 @@ export type Database = {
           id: string
           name: string
           user_id: string
+          team_mode: boolean
+          max_teams: number
+          auto_read: boolean
         }
         Insert: {
           created_at?: string
@@ -276,6 +279,9 @@ export type Database = {
           id?: string
           name: string
           user_id: string
+          team_mode?: boolean
+          max_teams?: number
+          auto_read?: boolean
         }
         Update: {
           created_at?: string
@@ -283,6 +289,9 @@ export type Database = {
           id?: string
           name?: string
           user_id?: string
+          team_mode?: boolean
+          max_teams?: number
+          auto_read?: boolean
         }
         Relationships: []
       }
