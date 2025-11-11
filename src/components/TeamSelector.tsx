@@ -167,7 +167,7 @@ export default function TeamSelector({
       {selectedTeam && (
         <div className="text-center mt-6 p-4 bg-green-50 border-2 border-green-400 rounded-lg">
           <p className="text-green-800 font-semibold">
-            ✅ You're on <span className="font-bold">{TEAMS[selectedTeam].name}</span>!
+            ✅ You&apos;re on <span className="font-bold">{TEAMS[selectedTeam].name}</span>!
           </p>
         </div>
       )}

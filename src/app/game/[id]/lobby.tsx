@@ -111,7 +111,7 @@ export default function Lobby({
               </h1>
               <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4 mb-4">
                 <p className="text-base sm:text-lg text-gray-700">
-                  ✅ You're registered!<br />
+                  ✅ You&apos;re registered!<br />
                   🎮 Waiting for host to start...<br />
                   💬 Chat with other players below!
                 </p>

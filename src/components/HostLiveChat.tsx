@@ -268,7 +268,7 @@ export default function HostLiveChat({
           </button>
         </div>
         <p className="text-xs text-gray-500 mt-2">
-          {newMessage.length}/200 characters • You appear as "🎯 Host"
+          {newMessage.length}/200 characters • You appear as &quot;🎯 Host&quot;
         </p>
       </form>
     </div>

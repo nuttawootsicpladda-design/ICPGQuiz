@@ -26,7 +26,7 @@ export default function VerticalLeaderboard({
 
   useEffect(() => {
     // Sort by total_score and create rankings
-    const sorted = [...gameResults].sort((a, b) => b.total_score - a.total_score)
+    const sorted = [...gameResults].sort((a, b) => (b.total_score || 0) - (a.total_score || 0))
 
     // Add rank information and detect changes
     const withRanks: RankWithAnimation[] = sorted.map((result, index) => {
@@ -200,7 +200,7 @@ export default function VerticalLeaderboard({
                       </div>
                       <div className="flex items-center gap-2 text-xs sm:text-sm">
                         <span className={isTopThree ? 'text-white/80' : 'text-white/60'}>
-                          {result.correct_answers}/{result.total_questions} correct
+                          Score: {result.total_score || 0}
                         </span>
                         {result.animationState === 'up' && (
                           <span className="text-green-300 font-bold flex items-center gap-1">

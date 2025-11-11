@@ -62,7 +62,19 @@ export default function TeamLeaderboard({
 
       if (error) throw error
 
-      setTeamScores(data || [])
+      // Filter and transform data to match TeamScore interface
+      const scores = (data || [])
+        .filter(item => item.team_id !== null)
+        .map(item => ({
+          team_id: item.team_id as string,
+          team_member_count: item.team_member_count || 0,
+          total_team_score: item.total_team_score || 0,
+          correct_answers: item.correct_answers || 0,
+          total_answers: item.total_answers || 0,
+          rank: item.rank || 0
+        }))
+
+      setTeamScores(scores)
     } catch (error) {
       console.error('Error loading team scores:', error)
     } finally {

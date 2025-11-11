@@ -106,6 +106,8 @@ export type Database = {
           is_answer_revealed: boolean
           phase: string
           quiz_set_id: string
+          team_mode: boolean
+          max_teams: number
         }
         Insert: {
           created_at?: string
@@ -115,6 +117,8 @@ export type Database = {
           is_answer_revealed?: boolean
           phase?: string
           quiz_set_id: string
+          team_mode?: boolean
+          max_teams?: number
         }
         Update: {
           created_at?: string
@@ -124,6 +128,8 @@ export type Database = {
           is_answer_revealed?: boolean
           phase?: string
           quiz_set_id?: string
+          team_mode?: boolean
+          max_teams?: number
         }
         Relationships: [
           {
@@ -149,6 +155,8 @@ export type Database = {
           id: string
           nickname: string
           user_id: string
+          avatar_id: string
+          team_id: string | null
         }
         Insert: {
           created_at?: string
@@ -156,6 +164,8 @@ export type Database = {
           id?: string
           nickname: string
           user_id?: string
+          avatar_id?: string
+          team_id?: string | null
         }
         Update: {
           created_at?: string
@@ -163,6 +173,8 @@ export type Database = {
           id?: string
           nickname?: string
           user_id?: string
+          avatar_id?: string
+          team_id?: string | null
         }
         Relationships: [
           {
@@ -274,6 +286,84 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          id: string
+          game_id: string
+          participant_id: string
+          message: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          game_id: string
+          participant_id: string
+          message: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          game_id?: string
+          participant_id?: string
+          message?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reactions: {
+        Row: {
+          id: string
+          game_id: string
+          participant_id: string
+          emoji: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          game_id: string
+          participant_id: string
+          emoji: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          game_id?: string
+          participant_id?: string
+          emoji?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reactions_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       game_results: {
@@ -282,6 +372,31 @@ export type Database = {
           nickname: string | null
           participant_id: string | null
           total_score: number | null
+        }
+        Relationships: []
+      }
+      team_results: {
+        Row: {
+          game_id: string | null
+          team_id: string | null
+          team_member_count: number | null
+          total_team_score: number | null
+          avg_score_per_answer: number | null
+          correct_answers: number | null
+          total_answers: number | null
+        }
+        Relationships: []
+      }
+      team_leaderboard: {
+        Row: {
+          game_id: string | null
+          team_id: string | null
+          team_member_count: number | null
+          total_team_score: number | null
+          avg_score_per_answer: number | null
+          correct_answers: number | null
+          total_answers: number | null
+          rank: number | null
         }
         Relationships: []
       }
