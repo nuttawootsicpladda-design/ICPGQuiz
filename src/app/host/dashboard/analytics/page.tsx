@@ -59,7 +59,7 @@ export default function AnalyticsPage() {
       .from('quiz_analytics' as any)
       .select('*')
 
-    const userAnalytics = analyticsData?.filter((a) =>
+    const userAnalytics = (analyticsData as any)?.filter((a: any) =>
       quizzesData?.some((q) => q.id === a.quiz_set_id)
     )
 
@@ -73,7 +73,7 @@ export default function AnalyticsPage() {
       .select('*')
       .eq('quiz_set_id', quizId)
 
-    setQuestionAnalytics(data || [])
+    setQuestionAnalytics((data as any) || [])
   }
 
   const getTotalPlays = () => {
