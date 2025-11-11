@@ -8,6 +8,7 @@ import Quiz from './quiz'
 import Confetti from 'react-confetti'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import { AvatarDisplay } from '@/components/AvatarPicker'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 enum Screens {
   lobby = 'lobby',
@@ -39,32 +40,55 @@ export default function Home({
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
 
   const getGame = async () => {
-    const { data: game } = await supabase
-      .from('games')
-      .select()
-      .eq('id', gameId)
-      .single()
-    if (!game) return
-    setCurrentScreen(game.phase as Screens)
-    if (game.phase == Screens.quiz) {
-      setCurrentQuestionSequence(game.current_question_sequence)
-      setIsAnswerRevealed(game.is_answer_revealed)
-    }
+    try {
+      const { data: game, error } = await supabase
+        .from('games')
+        .select()
+        .eq('id', gameId)
+        .single()
+      
+      if (error) {
+        console.error('Error fetching game:', error)
+        return
+      }
+      
+      if (!game) return
+      
+      setCurrentScreen(game.phase as Screens)
+      if (game.phase == Screens.quiz) {
+        setCurrentQuestionSequence(game.current_question_sequence)
+        setIsAnswerRevealed(game.is_answer_revealed)
+      }
 
-    getQuestions(game.quiz_set_id)
+      getQuestions(game.quiz_set_id)
+    } catch (e) {
+      console.error('Exception fetching game:', e)
+    }
   }
 
-  const getQuestions = async (quizSetId: string) => {
-    const { data, error } = await supabase
-      .from('questions')
-      .select(`*, choices(*)`)
-      .eq('quiz_set_id', quizSetId)
-      .order('order', { ascending: true })
-    if (error) {
-      getQuestions(quizSetId)
-      return
+  const getQuestions = async (quizSetId: string, retryCount = 0) => {
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .select(`*, choices(*)`)
+        .eq('quiz_set_id', quizSetId)
+        .order('order', { ascending: true })
+      
+      if (error) {
+        console.error('Error fetching questions:', error)
+        if (retryCount < 3) {
+          console.log(`Retrying... (${retryCount + 1}/3)`)
+          setTimeout(() => getQuestions(quizSetId, retryCount + 1), 1000)
+        }
+        return
+      }
+      setQuestions(data)
+    } catch (e) {
+      console.error('Exception fetching questions:', e)
+      if (retryCount < 3) {
+        setTimeout(() => getQuestions(quizSetId, retryCount + 1), 1000)
+      }
     }
-    setQuestions(data)
   }
 
   useEffect(() => {
@@ -104,26 +128,28 @@ export default function Home({
   }, [gameId])
 
   return (
-    <main className="bg-green-500 min-h-screen">
-      {currentScreen == Screens.lobby && (
-        <Lobby
-          onRegisterCompleted={onRegisterCompleted}
-          gameId={gameId}
-        ></Lobby>
-      )}
-      {currentScreen == Screens.quiz && questions && (
-        <Quiz
-          question={questions![currentQuestionSequence]}
-          questionCount={questions!.length}
-          participantId={participant!.id}
-          isAnswerRevealed={isAnswerRevealed}
-          gameId={gameId}
-        ></Quiz>
-      )}
-      {currentScreen == Screens.results && (
-        <Results participant={participant!}></Results>
-      )}
-    </main>
+    <ErrorBoundary>
+      <main className="bg-green-500 min-h-screen">
+        {currentScreen == Screens.lobby && (
+          <Lobby
+            onRegisterCompleted={onRegisterCompleted}
+            gameId={gameId}
+          ></Lobby>
+        )}
+        {currentScreen == Screens.quiz && questions && (
+          <Quiz
+            question={questions![currentQuestionSequence]}
+            questionCount={questions!.length}
+            participantId={participant!.id}
+            isAnswerRevealed={isAnswerRevealed}
+            gameId={gameId}
+          ></Quiz>
+        )}
+        {currentScreen == Screens.results && (
+          <Results participant={participant!}></Results>
+        )}
+      </main>
+    </ErrorBoundary>
   )
 }
 

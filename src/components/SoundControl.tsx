@@ -18,7 +18,7 @@ export default function SoundControl() {
   return (
     <button
       onClick={handleToggle}
-      className="fixed bottom-4 right-4 bg-white rounded-full p-4 shadow-lg hover:shadow-xl transition z-50"
+      className="fixed bottom-4 left-4 bg-white rounded-full p-4 shadow-lg hover:shadow-xl transition z-50"
       title={isMuted ? 'Unmute' : 'Mute'}
     >
       {isMuted ? (

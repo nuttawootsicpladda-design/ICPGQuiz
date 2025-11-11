@@ -30,6 +30,8 @@ export default function Quiz({
 
   const [participants, setParticipants] = useState<Participant[]>([])
 
+  const [loadError, setLoadError] = useState<string | null>(null)
+
   useEffect(() => {
     setChosenChoice(null)
     setHasShownChoices(false)
@@ -38,10 +40,14 @@ export default function Quiz({
   useEffect(() => {
     // Play sound when answer is revealed
     if (isAnswerRevealed && chosenChoice) {
-      if (chosenChoice.is_correct) {
-        playSound('correct')
-      } else {
-        playSound('wrong')
+      try {
+        if (chosenChoice.is_correct) {
+          playSound('correct')
+        } else {
+          playSound('wrong')
+        }
+      } catch (e) {
+        console.debug('Sound playback failed', e)
       }
 
       // Fetch leaderboard and participants when answer is revealed
@@ -49,30 +55,46 @@ export default function Quiz({
         fetchLeaderboard()
       }
     }
-  }, [isAnswerRevealed, chosenChoice])
+  }, [isAnswerRevealed, chosenChoice, gameId])
 
   const fetchLeaderboard = async () => {
     if (!gameId) return
 
-    // Fetch all game results for leaderboard
-    const { data: leaderboardData } = await supabase
-      .from('game_results')
-      .select()
-      .eq('game_id', gameId)
-      .order('total_score', { ascending: false })
+    try {
+      // Fetch all game results for leaderboard
+      const { data: leaderboardData, error: leaderboardError } = await supabase
+        .from('game_results')
+        .select()
+        .eq('game_id', gameId)
+        .order('total_score', { ascending: false })
 
-    if (leaderboardData) {
-      setLeaderboard(leaderboardData)
-    }
+      if (leaderboardError) {
+        console.error('Error fetching leaderboard:', leaderboardError)
+        setLoadError('Failed to load leaderboard')
+        return
+      }
 
-    // Fetch participants for avatar display
-    const { data: participantsData } = await supabase
-      .from('participants')
-      .select()
-      .eq('game_id', gameId)
+      if (leaderboardData) {
+        setLeaderboard(leaderboardData)
+      }
 
-    if (participantsData) {
-      setParticipants(participantsData)
+      // Fetch participants for avatar display
+      const { data: participantsData, error: participantsError } = await supabase
+        .from('participants')
+        .select()
+        .eq('game_id', gameId)
+
+      if (participantsError) {
+        console.error('Error fetching participants:', participantsError)
+        return
+      }
+
+      if (participantsData) {
+        setParticipants(participantsData)
+      }
+    } catch (e) {
+      console.error('Error in fetchLeaderboard:', e)
+      setLoadError('Failed to load data')
     }
   }
 
@@ -104,6 +126,13 @@ export default function Quiz({
 
   return (
     <div className="h-screen flex flex-col items-stretch bg-slate-900 relative">
+      {/* Error Display */}
+      {loadError && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+          {loadError}
+        </div>
+      )}
+
       <SoundControl />
 
       {/* Live Reactions */}
@@ -131,19 +160,21 @@ export default function Quiz({
 
       {!hasShownChoices && !isAnswerRevealed && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-transparent flex justify-center">
-          <CountdownCircleTimer
-            onComplete={() => {
-              setHasShownChoices(true)
-              setQuestionStartTime(Date.now())
-            }}
-            isPlaying
-            duration={TIME_TIL_CHOICE_REVEAL / 1000}
-            colors={['#fff', '#fff', '#fff', '#fff']}
-            trailColor={'transparent' as ColorFormat}
-            colorsTime={[7, 5, 2, 0]}
-          >
-            {({ remainingTime }) => remainingTime}
-          </CountdownCircleTimer>
+          {typeof window !== 'undefined' && (
+            <CountdownCircleTimer
+              onComplete={() => {
+                setHasShownChoices(true)
+                setQuestionStartTime(Date.now())
+              }}
+              isPlaying
+              duration={TIME_TIL_CHOICE_REVEAL / 1000}
+              colors={['#fff', '#fff', '#fff', '#fff']}
+              trailColor={'transparent' as ColorFormat}
+              colorsTime={[7, 5, 2, 0]}
+            >
+              {({ remainingTime }) => remainingTime}
+            </CountdownCircleTimer>
+          )}
         </div>
       )}
 

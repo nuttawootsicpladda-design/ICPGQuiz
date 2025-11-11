@@ -14,38 +14,65 @@ class SoundManager {
   }
 
   private initSounds() {
-    // Sound URLs (using free sound libraries)
-    const soundUrls = {
-      correct: 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3', // Success
-      wrong: 'https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3', // Error
-      tick: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', // Clock tick
-      join: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3', // Player join
-      start: 'https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3', // Game start
-      celebrate: 'https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3', // Victory
-      lobby: 'https://assets.mixkit.co/active_storage/sfx/2489/2489-preview.mp3', // Lobby music
+    try {
+      // Sound URLs (using free sound libraries)
+      const soundUrls = {
+        correct: 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3', // Success
+        wrong: 'https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3', // Error
+        tick: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', // Clock tick
+        join: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3', // Player join
+        start: 'https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3', // Game start
+        celebrate: 'https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3', // Victory
+        lobby: 'https://assets.mixkit.co/active_storage/sfx/2489/2489-preview.mp3', // Lobby music
+      }
+
+      // Preload sounds with error handling
+      Object.entries(soundUrls).forEach(([key, url]) => {
+        try {
+          const audio = new Audio(url)
+          audio.preload = 'metadata' // Changed from 'auto' to reduce initial load
+          audio.volume = this.sfxVolume
+          
+          // Add error handler for each audio element
+          audio.addEventListener('error', (e) => {
+            console.warn(`Failed to load sound: ${key}`, e)
+          })
+          
+          this.sounds[key] = audio
+        } catch (e) {
+          console.warn(`Failed to create audio for: ${key}`, e)
+        }
+      })
+
+      // Load music from localStorage with error handling
+      try {
+        const savedMute = localStorage.getItem('supaquiz_muted')
+        this.isMuted = savedMute === 'true'
+      } catch (e) {
+        console.warn('Failed to access localStorage', e)
+        this.isMuted = false
+      }
+    } catch (e) {
+      console.error('Failed to initialize sounds', e)
     }
-
-    // Preload sounds
-    Object.entries(soundUrls).forEach(([key, url]) => {
-      const audio = new Audio(url)
-      audio.preload = 'auto'
-      audio.volume = this.sfxVolume
-      this.sounds[key] = audio
-    })
-
-    // Load music from localStorage
-    const savedMute = localStorage.getItem('supaquiz_muted')
-    this.isMuted = savedMute === 'true'
   }
 
   // Play sound effect
   play(soundName: string) {
-    if (this.isMuted) return
+    try {
+      if (this.isMuted) return
 
-    const sound = this.sounds[soundName]
-    if (sound) {
-      sound.currentTime = 0
-      sound.play().catch((e) => console.log('Sound play failed:', e))
+      const sound = this.sounds[soundName]
+      if (sound) {
+        sound.currentTime = 0
+        sound.play().catch((e) => {
+          // Silently fail - don't block the app
+          console.debug('Sound play failed:', soundName, e)
+        })
+      }
+    } catch (e) {
+      // Silently fail - don't block the app
+      console.debug('Sound play error:', soundName, e)
     }
   }
 
@@ -96,7 +123,12 @@ class SoundManager {
   // Toggle mute
   toggleMute() {
     this.isMuted = !this.isMuted
-    localStorage.setItem('supaquiz_muted', String(this.isMuted))
+    
+    try {
+      localStorage.setItem('supaquiz_muted', String(this.isMuted))
+    } catch (e) {
+      console.warn('Failed to save mute state', e)
+    }
 
     if (this.isMuted) {
       this.stopMusic()
