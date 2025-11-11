@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import * as cheerio from 'cheerio'
 
+// Force dynamic rendering - do not pre-render at build time
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 // Initialize OpenAI
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
