@@ -29,6 +29,8 @@ export default function Quiz({
 
   const [countdown, setCountdown] = useState<number | null>(null)
 
+  const [isAutoAdvanceEnabled, setIsAutoAdvanceEnabled] = useState(true)
+
   const [leaderboard, setLeaderboard] = useState<GameResult[]>([])
 
   const answerStateRef = useRef<Answer[]>()
@@ -83,9 +85,9 @@ export default function Quiz({
       setLeaderboard(leaderboardData)
     }
 
-    // Start auto-advance countdown
+    // Start auto-advance countdown only if enabled
     const autoAdvanceTime = (quizSet as any).auto_advance_time || 0
-    if (autoAdvanceTime > 0) {
+    if (autoAdvanceTime > 0 && isAutoAdvanceEnabled) {
       setCountdown(autoAdvanceTime)
     }
   }
@@ -175,6 +177,37 @@ export default function Quiz({
   return (
     <div className={`h-screen flex flex-col items-stretch ${theme.gameBg} relative`}>
       <div className="absolute right-2 sm:right-4 top-2 sm:top-4 flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3 z-10">
+        {/* Auto-Advance Toggle Button */}
+        {(quizSet as any).auto_advance_time > 0 && (
+          <button
+            className={`px-3 sm:px-4 py-1 sm:py-2 font-semibold text-sm sm:text-base rounded-lg transition shadow-lg active:scale-95 ${
+              isAutoAdvanceEnabled
+                ? 'bg-green-500 text-white hover:bg-green-600'
+                : 'bg-gray-400 text-white hover:bg-gray-500'
+            }`}
+            onClick={() => {
+              const newState = !isAutoAdvanceEnabled
+              setIsAutoAdvanceEnabled(newState)
+
+              // If turning off and countdown is active, stop it
+              if (!newState && countdownIntervalRef.current) {
+                clearInterval(countdownIntervalRef.current)
+                setCountdown(null)
+              }
+              // If turning on and answer is revealed, restart countdown
+              if (newState && isAnswerRevealed) {
+                const autoAdvanceTime = (quizSet as any).auto_advance_time || 0
+                if (autoAdvanceTime > 0) {
+                  setCountdown(autoAdvanceTime)
+                }
+              }
+            }}
+            title={isAutoAdvanceEnabled ? 'Auto-Advance ON' : 'Auto-Advance OFF'}
+          >
+            {isAutoAdvanceEnabled ? '⏩ Auto' : '⏸️ Manual'}
+          </button>
+        )}
+
         {/* Text-to-Speech Button */}
         {isSupported && !isAnswerRevealed && (
           <button
