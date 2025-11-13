@@ -7,3 +7,12 @@
 
 [build.environment]
   NODE_VERSION = "18"
+
+[functions]
+  # Increase timeout for AI generation (max 26s for Pro plan, 10s for Free)
+  node_bundler = "esbuild"
+
+[[functions]]
+  # Specific timeout for generate-quiz API
+  path = "api/generate-quiz"
+  node_bundler = "esbuild"

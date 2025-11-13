@@ -117,11 +117,12 @@ Do not include any markdown formatting, code blocks, or extra text. Return ONLY 
 
   try {
     // Adjust max_tokens based on number of questions to stay within Netlify timeout (10s)
-    const estimatedTokens = Math.min(numberOfQuestions * 300 + 500, 2500)
+    // Reduced token limit for faster response
+    const estimatedTokens = Math.min(numberOfQuestions * 200 + 300, 2000)
 
     const completion = await openai.chat.completions.create(
       {
-        model: 'gpt-4o-mini', // Using GPT-4o-mini for cost efficiency (can change to gpt-4 for better quality)
+        model: 'gpt-4o-mini', // Using GPT-4o-mini for speed and cost efficiency
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: promptContent },
@@ -130,7 +131,7 @@ Do not include any markdown formatting, code blocks, or extra text. Return ONLY 
         max_tokens: estimatedTokens,
       },
       {
-        timeout: 8000, // 8 seconds to stay within Netlify's 10s limit
+        timeout: 25000, // 25 seconds timeout for OpenAI API
       }
     )
 
