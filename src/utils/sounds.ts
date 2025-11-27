@@ -17,13 +17,13 @@ class SoundManager {
     try {
       // Sound URLs (using free sound libraries)
       const soundUrls = {
-        correct: 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3', // Success
-        wrong: 'https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3', // Error
-        tick: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', // Clock tick
-        join: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3', // Player join
-        start: 'https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3', // Game start
-        celebrate: 'https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3', // Victory
-        lobby: 'https://assets.mixkit.co/active_storage/sfx/146/146-preview.mp3', // Upbeat lobby background music
+        correct: 'https://cdn.pixabay.com/audio/2022/03/24/audio_805cb36a39.mp3', // Success
+        wrong: 'https://cdn.pixabay.com/audio/2022/03/15/audio_7265509330.mp3', // Error
+        tick: 'https://cdn.pixabay.com/audio/2022/10/30/audio_701173d310.mp3', // Clock tick
+        join: 'https://cdn.pixabay.com/audio/2022/03/10/audio_f42a9e649f.mp3', // Player join notification
+        start: 'https://cdn.pixabay.com/audio/2022/03/15/audio_942594ff19.mp3', // Game start
+        celebrate: 'https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3', // Victory fanfare
+        lobby: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3', // Upbeat lobby background music
       }
 
       // Preload sounds with error handling
