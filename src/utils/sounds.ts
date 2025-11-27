@@ -23,7 +23,7 @@ class SoundManager {
         join: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3', // Player join
         start: 'https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3', // Game start
         celebrate: 'https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3', // Victory
-        lobby: 'https://assets.mixkit.co/active_storage/sfx/2489/2489-preview.mp3', // Lobby music
+        lobby: 'https://assets.mixkit.co/active_storage/sfx/146/146-preview.mp3', // Upbeat lobby background music
       }
 
       // Preload sounds with error handling
