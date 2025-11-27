@@ -15,14 +15,14 @@ class SoundManager {
 
   private initSounds() {
     try {
-      // Sound URLs (using free sound libraries)
+      // Sound URLs - using freely available sounds
       const soundUrls = {
-        correct: 'https://cdn.pixabay.com/audio/2022/03/24/audio_805cb36a39.mp3', // Success
-        wrong: 'https://cdn.pixabay.com/audio/2022/03/15/audio_7265509330.mp3', // Error
-        tick: 'https://cdn.pixabay.com/audio/2022/10/30/audio_701173d310.mp3', // Clock tick
-        join: 'https://cdn.pixabay.com/audio/2022/03/10/audio_f42a9e649f.mp3', // Player join notification
-        start: 'https://cdn.pixabay.com/audio/2022/03/15/audio_942594ff19.mp3', // Game start
-        celebrate: 'https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3', // Victory fanfare
+        correct: 'https://www.soundjay.com/buttons/sounds/button-09a.mp3', // Success
+        wrong: 'https://www.soundjay.com/buttons/sounds/button-10.mp3', // Error
+        tick: 'https://www.soundjay.com/clock/sounds/clock-ticking-2.mp3', // Clock tick
+        join: 'https://www.soundjay.com/buttons/sounds/button-35.mp3', // Player join notification
+        start: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3', // Game start
+        celebrate: 'https://www.soundjay.com/human/sounds/applause-01.mp3', // Victory
         lobby: '/lobby-music.mp3', // Local lobby background music
       }
 

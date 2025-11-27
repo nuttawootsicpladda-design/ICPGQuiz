@@ -19,6 +19,7 @@ export default function Lobby({
   const theme = getThemeById((quizSet as any).theme_id) || DEFAULT_THEME
   const { Canvas } = useQRCode()
   const [hostUserId, setHostUserId] = useState<string>('')
+  const [musicStarted, setMusicStarted] = useState(false)
 
   // Filter out host from players list
   const participants = allParticipants.filter(p => (p as any).user_id !== hostUserId)
@@ -35,12 +36,17 @@ export default function Lobby({
     getHostUserId()
   }, [])
 
-  // Auto play lobby music
-  useEffect(() => {
-    playMusic('lobby')
+  // Start music when user clicks
+  const startMusic = () => {
+    if (!musicStarted) {
+      playMusic('lobby')
+      setMusicStarted(true)
+    }
+  }
 
+  // Stop music when leaving lobby
+  useEffect(() => {
     return () => {
-      // Stop music when leaving lobby
       stopMusic()
     }
   }, [])
@@ -70,8 +76,19 @@ export default function Lobby({
     <div
       className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat px-4 py-8"
       style={{ backgroundImage: "url('/BGlobby.jpg')" }}
+      onClick={startMusic}
     >
       <SoundControl />
+
+      {/* Music button - shows until music is started */}
+      {!musicStarted && (
+        <button
+          onClick={startMusic}
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full shadow-2xl hover:from-purple-700 hover:to-pink-700 transition z-50 flex items-center gap-3 animate-bounce text-lg font-bold"
+        >
+          🎵 คลิกเพื่อเปิดเพลง
+        </button>
+      )}
 
       <div className="flex flex-col lg:flex-row justify-between gap-6 m-auto bg-white bg-opacity-95 backdrop-blur-lg p-6 sm:p-8 rounded-2xl shadow-2xl border-2 sm:border-4 border-orange-400 w-full max-w-7xl">
         {/* Left Column: Players List */}
