@@ -255,7 +255,8 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
               { id: 'topic', label: 'หัวข้อ', icon: '💡' },
               { id: 'text', label: 'เนื้อหา', icon: '📝' },
               { id: 'url', label: 'URL', icon: '🔗' },
-              { id: 'pdf', label: 'PDF', icon: '📄' },
+              // PDF tab hidden for now - uncomment when ready
+              // { id: 'pdf', label: 'PDF', icon: '📄' },
             ].map((tab) => (
               <button
                 key={tab.id}
