@@ -196,12 +196,11 @@ export default function AnalyticsPage() {
       : 'export'
 
     // Create CSV content
-    // Use tab separator to avoid Excel date conversion issues
     const headers = ['ลำดับ', 'ชื่อผู้เล่น', 'ตอบถูก', 'คะแนนรวม']
     const rows = leaderboard.map(player => [
       player.rank,
       `"${player.nickname}"`,
-      `"${player.correct_answers} / ${player.total_questions}"`,
+      player.correct_answers,
       player.total_score
     ])
 
