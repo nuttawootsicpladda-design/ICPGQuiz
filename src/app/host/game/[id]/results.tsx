@@ -47,7 +47,8 @@ export default function Results({
         .eq('game_id', gameId)
         .order('total_score', { ascending: false })
       if (error) {
-        return alert(error.message)
+        console.error('Error fetching game results:', error)
+        return
       }
 
       // Fetch participants with avatars
@@ -60,20 +61,23 @@ export default function Results({
         console.error('Error fetching participants:', participantsError)
       } else {
         setParticipants(participantsData || [])
+      }
 
-        // Filter out host from game results
-        const hostParticipant = participantsData?.find(p => (p as any).user_id === hostUserId)
+      // Filter out host from game results if we have hostUserId
+      if (hostUserId && participantsData) {
+        const hostParticipant = participantsData.find(p => (p as any).user_id === hostUserId)
         if (hostParticipant && data) {
           const filteredResults = data.filter(r => r.participant_id !== hostParticipant.id)
           setGameResults(filteredResults)
-        } else {
-          setGameResults(data || [])
+          return
         }
       }
+
+      // No host to filter, show all results
+      setGameResults(data || [])
     }
-    if (hostUserId) {
-      getResults()
-    }
+
+    getResults()
   }, [gameId, hostUserId])
 
   // Helper function to get participant avatar by ID

@@ -22,6 +22,18 @@ export default function Quiz({
 }) {
   const theme = getThemeById((quizSet as any).theme_id) || DEFAULT_THEME
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
+  const [hostUserId, setHostUserId] = useState<string | null>(null)
+
+  // Get host user ID on mount
+  useEffect(() => {
+    const getHostUserId = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setHostUserId(user.id)
+      }
+    }
+    getHostUserId()
+  }, [])
 
   const [hasShownChoices, setHasShownChoices] = useState(false)
 
@@ -159,9 +171,14 @@ export default function Quiz({
             return [...currentAnswers, payload.new as Answer]
           })
 
+          // Filter out host from participants count
+          const playerCount = hostUserId
+            ? participants.filter(p => (p as any).user_id !== hostUserId).length
+            : participants.length
+
           if (
-            (answerStateRef.current?.length ?? 0) + 1 ===
-            participants.length
+            (answerStateRef.current?.length ?? 0) + 1 >=
+            playerCount
           ) {
             onTimeUp()
           }
