@@ -3,8 +3,6 @@ import { Choice, Question, supabase, GameResult, Participant } from '@/types/typ
 import { useState, useEffect } from 'react'
 import { ColorFormat, CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { playSound } from '@/utils/sounds'
-import SoundControl from '@/components/SoundControl'
-import LiveReactions from '@/components/LiveReactions'
 import VerticalLeaderboard from '@/components/VerticalLeaderboard'
 
 export default function Quiz({
@@ -131,17 +129,6 @@ export default function Quiz({
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
           {loadError}
         </div>
-      )}
-
-      <SoundControl />
-
-      {/* Live Reactions */}
-      {gameId && (
-        <LiveReactions
-          gameId={gameId}
-          participantId={playerId}
-          showPicker={true}
-        />
       )}
 
       <div className="flex-grow flex justify-center items-center text-center px-4 py-4">
