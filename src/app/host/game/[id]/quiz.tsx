@@ -30,6 +30,7 @@ export default function Quiz({
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setHostUserId(user.id)
+        hostUserIdRef.current = user.id
       }
     }
     getHostUserId()
@@ -47,6 +48,7 @@ export default function Quiz({
 
   const answerStateRef = useRef<Answer[]>()
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const hostUserIdRef = useRef<string | null>(null)
 
   // Text-to-Speech
   const { speak, stop, isSpeaking, isSupported } = useTextToSpeech({
@@ -171,9 +173,10 @@ export default function Quiz({
             return [...currentAnswers, payload.new as Answer]
           })
 
-          // Filter out host from participants count
-          const playerCount = hostUserId
-            ? participants.filter(p => (p as any).user_id !== hostUserId).length
+          // Filter out host from participants count (use ref to get latest value)
+          const currentHostUserId = hostUserIdRef.current
+          const playerCount = currentHostUserId
+            ? participants.filter(p => (p as any).user_id !== currentHostUserId).length
             : participants.length
 
           if (
