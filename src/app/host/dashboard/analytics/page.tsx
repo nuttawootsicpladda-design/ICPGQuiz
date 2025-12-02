@@ -21,12 +21,28 @@ interface QuestionAnalytics {
   correct_percentage: number
 }
 
+interface GameSession {
+  id: string
+  created_at: string
+  phase: string
+}
+
+interface PlayerRanking {
+  participant_id: string
+  nickname: string
+  total_score: number
+  rank: number
+}
+
 export default function AnalyticsPage() {
   const { user } = useAuth()
   const [quizzes, setQuizzes] = useState<any[]>([])
   const [selectedQuiz, setSelectedQuiz] = useState<string | null>(null)
   const [quizAnalytics, setQuizAnalytics] = useState<QuizAnalytics[]>([])
   const [questionAnalytics, setQuestionAnalytics] = useState<QuestionAnalytics[]>([])
+  const [gameSessions, setGameSessions] = useState<GameSession[]>([])
+  const [selectedGame, setSelectedGame] = useState<string | null>(null)
+  const [leaderboard, setLeaderboard] = useState<PlayerRanking[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -38,8 +54,15 @@ export default function AnalyticsPage() {
   useEffect(() => {
     if (selectedQuiz) {
       loadQuestionAnalytics(selectedQuiz)
+      loadGameSessions(selectedQuiz)
     }
   }, [selectedQuiz])
+
+  useEffect(() => {
+    if (selectedGame) {
+      loadLeaderboard(selectedGame)
+    }
+  }, [selectedGame])
 
   const loadData = async () => {
     if (!user?.id) return
@@ -74,6 +97,41 @@ export default function AnalyticsPage() {
       .eq('quiz_set_id', quizId)
 
     setQuestionAnalytics((data as any) || [])
+  }
+
+  const loadGameSessions = async (quizId: string) => {
+    const { data } = await supabase
+      .from('games')
+      .select('id, created_at, phase')
+      .eq('quiz_set_id', quizId)
+      .order('created_at', { ascending: false })
+
+    setGameSessions((data as GameSession[]) || [])
+    // Auto-select first game if available
+    if (data && data.length > 0) {
+      setSelectedGame(data[0].id)
+    } else {
+      setSelectedGame(null)
+      setLeaderboard([])
+    }
+  }
+
+  const loadLeaderboard = async (gameId: string) => {
+    const { data } = await supabase
+      .from('game_results')
+      .select('*')
+      .eq('game_id', gameId)
+      .order('total_score', { ascending: false })
+
+    // Add rank to each player
+    const rankedData: PlayerRanking[] = (data || []).map((player: any, index: number) => ({
+      participant_id: player.participant_id,
+      nickname: player.nickname,
+      total_score: player.total_score || 0,
+      rank: index + 1,
+    }))
+
+    setLeaderboard(rankedData)
   }
 
   const getTotalPlays = () => {
@@ -210,7 +268,7 @@ export default function AnalyticsPage() {
 
       {/* Question Analytics */}
       {selectedQuiz && questionAnalytics.length > 0 && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Question Performance</h2>
             <button
@@ -255,6 +313,80 @@ export default function AnalyticsPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Player Leaderboard */}
+      {selectedQuiz && gameSessions.length > 0 && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">ลำดับคะแนนผู้เล่น</h2>
+          </div>
+
+          {/* Game Session Selector */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">เลือกเกม:</label>
+            <select
+              value={selectedGame || ''}
+              onChange={(e) => setSelectedGame(e.target.value)}
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              {gameSessions.map((game, index) => (
+                <option key={game.id} value={game.id}>
+                  เกมที่ {gameSessions.length - index} - {new Date(game.created_at).toLocaleDateString('th-TH', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Leaderboard Table */}
+          {leaderboard.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 w-20">ลำดับ</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">ชื่อผู้เล่น</th>
+                    <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">คะแนนรวม</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {leaderboard.map((player) => (
+                    <tr key={player.participant_id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-center">
+                        {player.rank === 1 && (
+                          <span className="text-2xl">🥇</span>
+                        )}
+                        {player.rank === 2 && (
+                          <span className="text-2xl">🥈</span>
+                        )}
+                        {player.rank === 3 && (
+                          <span className="text-2xl">🥉</span>
+                        )}
+                        {player.rank > 3 && (
+                          <span className="text-lg font-bold text-gray-600">{player.rank}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-800 font-medium">{player.nickname}</td>
+                      <td className="px-4 py-3 text-center">
+                        <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-bold">
+                          {player.total_score.toLocaleString()}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-4">ไม่มีข้อมูลผู้เล่นในเกมนี้</p>
+          )}
         </div>
       )}
     </div>
