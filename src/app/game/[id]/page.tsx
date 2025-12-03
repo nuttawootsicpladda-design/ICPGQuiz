@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import React, { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import { Choice, Game, Participant, Question, supabase, GameResult } from '@/types/types'
 import Lobby from './lobby'
@@ -21,14 +21,10 @@ export default function Home({
 }: {
   params: { id: string }
 }) {
-  const onRegisterCompleted = (participant: Participant) => {
-    setParticipant(participant)
-    getGame()
-  }
-
   const stateRef = useRef<Participant | null>()
 
   const [participant, setParticipant] = useState<Participant | null>()
+  const [isLoading, setIsLoading] = useState(true)
 
   stateRef.current = participant
 
@@ -73,7 +69,7 @@ export default function Home({
         .select(`*, choices(*)`)
         .eq('quiz_set_id', quizSetId)
         .order('order', { ascending: true })
-      
+
       if (error) {
         console.error('Error fetching questions:', error)
         if (retryCount < 3) {
@@ -90,6 +86,42 @@ export default function Home({
       }
     }
   }
+
+  // Restore participant from localStorage on mount
+  useEffect(() => {
+    const restoreParticipant = async () => {
+      const storageKey = `participant_${gameId}`
+      const savedParticipantId = localStorage.getItem(storageKey)
+
+      if (savedParticipantId) {
+        // Verify participant still exists in database
+        const { data: participantData, error } = await supabase
+          .from('participants')
+          .select()
+          .eq('id', savedParticipantId)
+          .eq('game_id', gameId)
+          .maybeSingle()
+
+        if (!error && participantData) {
+          setParticipant(participantData)
+          // Get game state to restore correct screen
+          await getGame()
+        } else {
+          // Participant not found - clear localStorage
+          localStorage.removeItem(storageKey)
+        }
+      }
+      setIsLoading(false)
+    }
+
+    restoreParticipant()
+  }, [gameId])
+
+  // Stable callback for register completion
+  const onRegisterCompleted = useCallback((newParticipant: Participant) => {
+    setParticipant(newParticipant)
+    getGame()
+  }, [])
 
   useEffect(() => {
     const setGameListner = (): RealtimeChannel => {
@@ -127,6 +159,17 @@ export default function Home({
     }
   }, [gameId])
 
+  // Show loading while restoring participant
+  if (isLoading) {
+    return (
+      <main className="bg-green-500 min-h-screen flex items-center justify-center">
+        <div className="text-white text-2xl font-bold animate-pulse">
+          Loading...
+        </div>
+      </main>
+    )
+  }
+
   return (
     <ErrorBoundary>
       <main className="bg-green-500 min-h-screen">
@@ -136,17 +179,17 @@ export default function Home({
             gameId={gameId}
           ></Lobby>
         )}
-        {currentScreen == Screens.quiz && questions && (
+        {currentScreen == Screens.quiz && questions && participant && (
           <Quiz
             question={questions![currentQuestionSequence]}
             questionCount={questions!.length}
-            participantId={participant!.id}
+            participantId={participant.id}
             isAnswerRevealed={isAnswerRevealed}
             gameId={gameId}
           ></Quiz>
         )}
-        {currentScreen == Screens.results && (
-          <Results participant={participant!}></Results>
+        {currentScreen == Screens.results && participant && (
+          <Results participant={participant}></Results>
         )}
       </main>
     </ErrorBoundary>
