@@ -5,7 +5,7 @@ import { playSound, playMusic, stopMusic } from '@/utils/sounds'
 import SoundControl from '@/components/SoundControl'
 import { AvatarDisplay } from '@/components/AvatarPicker'
 import { getThemeById, DEFAULT_THEME } from '@/utils/themes'
-import HostLiveChat from '@/components/HostLiveChat'
+// import HostLiveChat from '@/components/HostLiveChat' // Hidden: not ready
 
 export default function Lobby({
   participants: allParticipants,
@@ -149,15 +149,15 @@ export default function Lobby({
           </p>
         </div>
 
-        {/* Right Column: Live Chat */}
-        <div className="w-full lg:w-96 xl:w-[450px]">
+        {/* Right Column: Live Chat - Hidden: not ready */}
+        {/* <div className="w-full lg:w-96 xl:w-[450px]">
           {hostUserId && (
             <HostLiveChat
               gameId={gameId}
               hostUserId={hostUserId}
             />
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   )

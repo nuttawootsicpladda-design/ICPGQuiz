@@ -2,7 +2,7 @@ import { Participant, supabase } from '@/types/types'
 import { FormEvent, useEffect, useState } from 'react'
 import AvatarPicker from '@/components/AvatarPicker'
 import { getRandomAvatar } from '@/utils/avatars'
-import LiveChat from '@/components/LiveChat'
+// import LiveChat from '@/components/LiveChat' // Hidden: not ready
 import LiveReactions from '@/components/LiveReactions'
 import TeamSelector from '@/components/TeamSelector'
 
@@ -83,7 +83,7 @@ export default function Lobby({
         />
       )}
 
-      <div className={`bg-white bg-opacity-95 p-6 sm:p-8 md:p-12 rounded-2xl shadow-2xl backdrop-blur-lg w-full ${participant ? 'max-w-4xl' : 'max-w-md'}`}>
+      <div className={`bg-white bg-opacity-95 p-6 sm:p-8 md:p-12 rounded-2xl shadow-2xl backdrop-blur-lg w-full max-w-md`}>
         {!participant && game && (
           <Register
             gameId={gameId}
@@ -95,7 +95,7 @@ export default function Lobby({
         )}
 
         {participant && game && (
-          <div className="text-gray-800 w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="text-gray-800 w-full">
             {/* Welcome Message & Team Selector */}
             <div>
               <h1 className="text-2xl sm:text-3xl pb-4 font-bold text-orange-600">
@@ -104,8 +104,7 @@ export default function Lobby({
               <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4 mb-4">
                 <p className="text-base sm:text-lg text-gray-700">
                   ✅ You&apos;re registered!<br />
-                  🎮 Waiting for host to start...<br />
-                  💬 Chat with other players below!
+                  🎮 Waiting for host to start...
                 </p>
               </div>
 
@@ -140,21 +139,20 @@ export default function Lobby({
                 <ul className="list-disc list-inside space-y-1">
                   {game.team_mode && <li>Choose your team above! 🏆</li>}
                   <li>Send reactions with the emoji button 😊</li>
-                  <li>Chat with other players</li>
                   <li>Get ready for the quiz!</li>
                 </ul>
               </div>
             </div>
 
-            {/* Live Chat */}
-            <div>
+            {/* Live Chat - Hidden: not ready */}
+            {/* <div>
               <LiveChat
                 gameId={gameId}
                 participantId={participant.id}
                 participantNickname={participant.nickname}
                 participantAvatar={(participant as any).avatar_id}
               />
-            </div>
+            </div> */}
           </div>
         )}
       </div>
