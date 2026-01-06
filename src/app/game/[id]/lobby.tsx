@@ -134,7 +134,7 @@ export default function Lobby({
                 </div>
               )}
 
-              <div className="text-sm text-gray-600 bg-purple-50 border-2 border-purple-300 rounded-lg p-3">
+              <div className="text-sm text-gray-600 bg-ci-50 border-2 border-ci-300 rounded-lg p-3">
                 <p className="font-semibold mb-1">💡 Tips:</p>
                 <ul className="list-disc list-inside space-y-1">
                   {game.team_mode && <li>Choose your team above! 🏆</li>}

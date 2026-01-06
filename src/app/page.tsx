@@ -16,7 +16,7 @@ export default function Home() {
   }, [user, loading, router])
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-red-500">
+    <main className="min-h-screen bg-gradient-to-br from-ci-700 via-ci-500 to-ci-400">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">
         <div className="text-center text-white mb-16">
@@ -27,13 +27,13 @@ export default function Home() {
           <div className="flex gap-4 justify-center">
             <Link
               href="/auth/register"
-              className="bg-white text-purple-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-opacity-90 transition shadow-xl"
+              className="bg-white text-ci px-8 py-4 rounded-lg font-bold text-lg hover:bg-opacity-90 transition shadow-xl"
             >
               Get Started Free
             </Link>
             <Link
               href="/auth/login"
-              className="bg-purple-800 bg-opacity-50 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-opacity-70 transition border-2 border-white"
+              className="bg-ci-800 bg-opacity-50 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-opacity-70 transition border-2 border-white"
             >
               Sign In
             </Link>
@@ -75,7 +75,7 @@ export default function Home() {
           </p>
           <Link
             href="/game"
-            className="inline-block bg-white text-purple-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-opacity-90 transition shadow-xl"
+            className="inline-block bg-white text-ci px-8 py-4 rounded-lg font-bold text-lg hover:bg-opacity-90 transition shadow-xl"
           >
             Join Game
           </Link>

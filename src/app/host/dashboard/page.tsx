@@ -129,7 +129,7 @@ export default function DashboardPage() {
           <div className="flex bg-white rounded-lg border border-gray-300">
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 sm:px-4 py-2 ${viewMode === 'grid' ? 'bg-purple-100 text-purple-700' : 'text-gray-600'} rounded-l-lg`}
+              className={`px-3 sm:px-4 py-2 ${viewMode === 'grid' ? 'bg-ci-100 text-ci-700' : 'text-gray-600'} rounded-l-lg`}
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -137,7 +137,7 @@ export default function DashboardPage() {
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`px-3 sm:px-4 py-2 ${viewMode === 'list' ? 'bg-purple-100 text-purple-700' : 'text-gray-600'} rounded-r-lg border-l`}
+              className={`px-3 sm:px-4 py-2 ${viewMode === 'list' ? 'bg-ci-100 text-ci-700' : 'text-gray-600'} rounded-r-lg border-l`}
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -147,7 +147,7 @@ export default function DashboardPage() {
 
           <Link
             href="/host/dashboard/create"
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-purple-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-purple-700 transition font-semibold text-sm sm:text-base"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-ci text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-ci-700 transition font-semibold text-sm sm:text-base"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -165,7 +165,7 @@ export default function DashboardPage() {
           <p className="text-sm sm:text-base text-gray-600 mb-6 px-4">สร้างควิซแรกของคุณเพื่อเริ่มต้น!</p>
           <Link
             href="/host/dashboard/create"
-            className="inline-block bg-purple-600 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-purple-700 transition font-semibold text-sm sm:text-base"
+            className="inline-block bg-ci text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-ci-700 transition font-semibold text-sm sm:text-base"
           >
             สร้างควิซแรกของคุณ
           </Link>
@@ -177,12 +177,19 @@ export default function DashboardPage() {
               key={quiz.id}
               className="bg-white rounded-lg shadow-md hover:shadow-xl transition overflow-hidden"
             >
-              <div className="h-28 sm:h-40 bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+              <div className="h-28 sm:h-40 bg-gradient-to-br from-ci-600 to-ci-400 flex items-center justify-center">
                 <div className="text-white text-4xl sm:text-6xl">🎯</div>
               </div>
 
               <div className="p-3 sm:p-5">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2 truncate">{quiz.name}</h3>
+                <div className="flex items-start justify-between mb-1 sm:mb-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-800 truncate flex-1">{quiz.name}</h3>
+                  {(quiz as any).allow_self_paced && (
+                    <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full font-medium flex-shrink-0">
+                      Self-Paced
+                    </span>
+                  )}
+                </div>
                 <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2">{quiz.description || 'ไม่มีคำอธิบาย'}</p>
 
                 <div className="flex items-center gap-4 text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">
@@ -192,15 +199,33 @@ export default function DashboardPage() {
                     </svg>
                     {quiz.questions?.length || 0} คำถาม
                   </span>
+                  {(quiz as any).team_mode && (
+                    <span className="flex items-center gap-1 text-ci">
+                      🏆 ทีม
+                    </span>
+                  )}
                 </div>
 
-                <div className="flex gap-1.5 sm:gap-2">
+                <div className="flex gap-1.5 sm:gap-2 flex-wrap">
                   <button
                     onClick={() => startGame(quiz.id)}
                     className="flex-1 bg-green-500 text-white py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg hover:bg-green-600 transition font-semibold text-sm sm:text-base"
                   >
                     เล่น
                   </button>
+                  {(quiz as any).allow_self_paced && (
+                    <button
+                      onClick={() => {
+                        const url = `${window.location.origin}/play/${quiz.id}`
+                        navigator.clipboard.writeText(url)
+                        alert(`คัดลอกลิงก์แล้ว!\n${url}`)
+                      }}
+                      className="px-2 sm:px-4 py-1.5 sm:py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition text-sm sm:text-base"
+                      title="คัดลอกลิงก์ Self-Paced"
+                    >
+                      🔗
+                    </button>
+                  )}
                   <button
                     onClick={() => router.push(`/host/dashboard/edit/${quiz.id}`)}
                     className="px-2 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm sm:text-base"

@@ -45,7 +45,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="bg-purple-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-purple-700 transition"
+                className="bg-ci text-white px-6 py-3 rounded-lg font-bold hover:bg-ci-700 transition"
               >
                 รีโหลดหน้า
               </button>

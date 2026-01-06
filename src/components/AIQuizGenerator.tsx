@@ -22,6 +22,53 @@ interface AIQuizGeneratorProps {
   onQuestionsGenerated: (questions: Question[]) => void
 }
 
+// Function to extract text from PowerPoint using JSZip
+async function extractTextFromPPTX(file: File): Promise<string> {
+  // Load JSZip from CDN if not already loaded
+  if (typeof window !== 'undefined' && !(window as any).JSZip) {
+    await new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'
+      script.onload = () => resolve()
+      script.onerror = () => reject(new Error('Failed to load JSZip'))
+      document.head.appendChild(script)
+    })
+  }
+
+  const JSZip = (window as any).JSZip
+  if (!JSZip) {
+    throw new Error('JSZip not loaded')
+  }
+
+  const arrayBuffer = await file.arrayBuffer()
+  const zip = await JSZip.loadAsync(arrayBuffer)
+
+  let fullText = ''
+
+  // PPTX files contain slides in ppt/slides/slide*.xml
+  const slideFiles = Object.keys(zip.files)
+    .filter(name => name.match(/ppt\/slides\/slide\d+\.xml$/))
+    .sort((a, b) => {
+      const numA = parseInt(a.match(/slide(\d+)/)?.[1] || '0')
+      const numB = parseInt(b.match(/slide(\d+)/)?.[1] || '0')
+      return numA - numB
+    })
+
+  for (const slideFile of slideFiles) {
+    const content = await zip.file(slideFile)?.async('string')
+    if (content) {
+      // Extract text from XML using regex (simple extraction)
+      const textMatches = content.match(/<a:t>([^<]*)<\/a:t>/g) || []
+      const slideText = textMatches
+        .map((match: string) => match.replace(/<\/?a:t>/g, ''))
+        .join(' ')
+      fullText += slideText + '\n'
+    }
+  }
+
+  return fullText.trim()
+}
+
 // Function to extract text from PDF using PDF.js from CDN
 async function extractTextFromPDF(file: File): Promise<string> {
   // Load PDF.js from CDN if not already loaded
@@ -63,11 +110,12 @@ async function extractTextFromPDF(file: File): Promise<string> {
 
 export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGeneratorProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<'topic' | 'text' | 'url' | 'pdf'>('topic')
+  const [activeTab, setActiveTab] = useState<'topic' | 'text' | 'url' | 'pdf' | 'pptx'>('topic')
   const [topic, setTopic] = useState('')
   const [textContent, setTextContent] = useState('')
   const [url, setUrl] = useState('')
   const [pdfFile, setPdfFile] = useState<File | null>(null)
+  const [pptxFile, setPptxFile] = useState<File | null>(null)
   const [numberOfQuestions, setNumberOfQuestions] = useState(5)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium')
   const [generating, setGenerating] = useState(false)
@@ -133,9 +181,34 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
               return
             }
             content = pdfText
+            type = 'text' // Treat PDF content as text for API
           } catch (pdfError) {
             console.error('PDF parsing error:', pdfError)
             setError('ไม่สามารถอ่านไฟล์ PDF ได้ กรุณาลองไฟล์อื่น')
+            setGenerating(false)
+            return
+          }
+          break
+
+        case 'pptx':
+          if (!pptxFile) {
+            setError('กรุณาเลือกไฟล์ PowerPoint')
+            setGenerating(false)
+            return
+          }
+          try {
+            // Extract text from PowerPoint using JSZip
+            const pptxText = await extractTextFromPPTX(pptxFile)
+            if (!pptxText || pptxText.length < 50) {
+              setError('ไม่สามารถอ่านเนื้อหาจาก PowerPoint ได้ หรือมีเนื้อหาน้อยเกินไป')
+              setGenerating(false)
+              return
+            }
+            content = pptxText
+            type = 'text' // Treat PPTX content as text for API
+          } catch (pptxError) {
+            console.error('PPTX parsing error:', pptxError)
+            setError('ไม่สามารถอ่านไฟล์ PowerPoint ได้ กรุณาลองไฟล์อื่น')
             setGenerating(false)
             return
           }
@@ -197,6 +270,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
       setTextContent('')
       setUrl('')
       setPdfFile(null)
+      setPptxFile(null)
 
     } catch (err: any) {
       console.error('Generation error:', err)
@@ -210,7 +284,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition active:scale-95 shadow-lg"
+        className="flex items-center gap-2 bg-gradient-to-r from-ci-700 to-ci-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:from-ci-800 hover:to-ci-600 transition active:scale-95 shadow-lg"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -224,11 +298,11 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6 rounded-t-xl">
+        <div className="sticky top-0 bg-gradient-to-r from-ci-700 to-ci-500 text-white p-6 rounded-t-xl">
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-2xl font-bold mb-1">AI Quiz Generator</h2>
-              <p className="text-purple-100 text-sm">สร้างคำถามด้วย AI ในไม่กี่วินาที</p>
+              <p className="text-ci-100 text-sm">สร้างคำถามด้วย AI ในไม่กี่วินาที</p>
             </div>
             <button
               onClick={() => setIsOpen(false)}
@@ -255,15 +329,15 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
               { id: 'topic', label: 'หัวข้อ', icon: '💡' },
               { id: 'text', label: 'เนื้อหา', icon: '📝' },
               { id: 'url', label: 'URL', icon: '🔗' },
-              // PDF tab hidden for now - uncomment when ready
-              // { id: 'pdf', label: 'PDF', icon: '📄' },
+              { id: 'pdf', label: 'PDF', icon: '📄' },
+              { id: 'pptx', label: 'PowerPoint', icon: '📊' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'bg-purple-600 text-white shadow-md'
+                    ? 'bg-ci text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -283,7 +357,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="เช่น: ประวัติศาสตร์ไทย, ภาษาอังกฤษ TOEIC, วิทยาศาสตร์ ม.3"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
                 />
                 <p className="text-sm text-gray-500 mt-2">💡 AI จะสร้างคำถามตามหัวข้อที่คุณระบุ</p>
               </div>
@@ -297,7 +371,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
                   onChange={(e) => setTextContent(e.target.value)}
                   rows={8}
                   placeholder="วางเนื้อหา เช่น บทความ, บทเรียน, หรือข้อความยาวๆ ที่ต้องการให้ AI สร้างคำถามจาก..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500 font-mono text-sm"
                 />
                 <p className="text-sm text-gray-500 mt-2">📝 AI จะวิเคราะห์เนื้อหาและสร้างคำถามที่เกี่ยวข้อง</p>
               </div>
@@ -311,7 +385,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://en.wikipedia.org/wiki/Thailand"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
                 />
                 <p className="text-sm text-gray-500 mt-2">🔗 AI จะดึงเนื้อหาจาก URL และสร้างคำถาม (ใช้ได้ดีกับ Wikipedia, บทความ)</p>
               </div>
@@ -320,7 +394,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
             {activeTab === 'pdf' && (
               <div>
                 <label className="block text-gray-700 font-medium mb-2">อัปโหลดไฟล์ PDF</label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-500 transition">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-ci-500 transition">
                   <input
                     type="file"
                     accept=".pdf"
@@ -338,6 +412,29 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
                 </div>
               </div>
             )}
+
+            {activeTab === 'pptx' && (
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">อัปโหลดไฟล์ PowerPoint</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-ci-500 transition">
+                  <input
+                    type="file"
+                    accept=".pptx,.ppt"
+                    onChange={(e) => setPptxFile(e.target.files?.[0] || null)}
+                    className="hidden"
+                    id="pptx-upload"
+                  />
+                  <label htmlFor="pptx-upload" className="cursor-pointer">
+                    <div className="text-4xl mb-2">📊</div>
+                    <p className="text-gray-700 font-medium">
+                      {pptxFile ? pptxFile.name : 'คลิกเพื่อเลือกไฟล์ PowerPoint'}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">รองรับไฟล์ .pptx และ .ppt</p>
+                    <p className="text-sm text-gray-500">AI จะอ่านข้อความจากสไลด์และสร้างคำถาม</p>
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Options */}
@@ -347,7 +444,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
               <select
                 value={numberOfQuestions}
                 onChange={(e) => setNumberOfQuestions(parseInt(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
               >
                 <option value={3}>3 คำถาม (เร็วที่สุด)</option>
                 <option value={5}>5 คำถาม (แนะนำ)</option>
@@ -361,7 +458,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value as any)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
               >
                 <option value="easy">ง่าย</option>
                 <option value="medium">ปานกลาง</option>
@@ -381,7 +478,7 @@ export default function AIQuizGenerator({ onQuestionsGenerated }: AIQuizGenerato
             <button
               onClick={handleGenerate}
               disabled={generating}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-ci-700 to-ci-500 text-white rounded-lg hover:from-ci-800 hover:to-ci-600 transition font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {generating ? (
                 <>

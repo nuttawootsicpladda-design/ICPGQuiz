@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import Lobby from './lobby'
 import Quiz from './quiz'
 import Results from './results'
+import BackgroundMusic from '@/components/BackgroundMusic'
 
 enum AdminScreens {
   lobby = 'lobby',
@@ -126,7 +127,8 @@ export default function Home({
   const [currentQuestionSequence, setCurrentQuestionSequence] = useState(0)
 
   return (
-    <main className="bg-green-600 min-h-screen">
+    <main className="bg-ci min-h-screen">
+      <BackgroundMusic />
       {currentScreen == AdminScreens.lobby && quizSet && (
         <Lobby participants={participants} gameId={gameId} quizSet={quizSet}></Lobby>
       )}

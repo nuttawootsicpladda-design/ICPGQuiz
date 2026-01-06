@@ -23,6 +23,15 @@ const menuItems = [
     ),
   },
   {
+    label: 'Enterprise',
+    href: '/host/dashboard/enterprise',
+    icon: (
+      <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg>
+    ),
+  },
+  {
     label: 'วิเคราะห์',
     href: '/host/dashboard/analytics',
     icon: (
@@ -49,13 +58,16 @@ export default function DashboardNav() {
     <nav className="hidden md:block border-r border-r-gray-200 bg-white">
       <ul>
         {menuItems.map((item) => {
-          const isActive = pathname === item.href
+          // For exact match on /host/dashboard, otherwise check if pathname starts with href
+          const isActive = item.href === '/host/dashboard'
+            ? pathname === item.href
+            : pathname.startsWith(item.href)
           return (
             <li key={item.href}>
               <Link
                 className={`flex items-center h-12 md:h-14 w-44 lg:w-52 transition ${
                   isActive
-                    ? 'bg-purple-100 text-purple-700 border-r-4 border-purple-700'
+                    ? 'bg-ci-100 text-ci-700 border-r-4 border-ci-700'
                     : 'hover:bg-gray-50'
                 }`}
                 href={item.href}

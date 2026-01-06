@@ -241,8 +241,8 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-purple-100 p-3 rounded-lg">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-ci-100 p-3 rounded-lg">
+              <svg className="w-6 h-6 text-ci" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
             </div>
@@ -327,7 +327,7 @@ export default function AnalyticsPage() {
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => setSelectedQuiz(quiz.quiz_set_id)}
-                        className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+                        className="text-ci hover:text-ci-700 font-medium text-sm"
                       >
                         View Details
                       </button>
@@ -414,7 +414,7 @@ export default function AnalyticsPage() {
             <select
               value={selectedGame || ''}
               onChange={(e) => setSelectedGame(e.target.value)}
-              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
             >
               {gameSessions.map((game, index) => (
                 <option key={game.id} value={game.id}>
@@ -466,7 +466,7 @@ export default function AnalyticsPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-bold">
+                        <span className="px-3 py-1 bg-ci-100 text-ci-700 rounded-full font-bold">
                           {player.total_score.toLocaleString()}
                         </span>
                       </td>

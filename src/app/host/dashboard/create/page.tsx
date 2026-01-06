@@ -37,6 +37,8 @@ export default function CreateQuizPage() {
   const [teamMode, setTeamMode] = useState(false)
   const [maxTeams, setMaxTeams] = useState(2)
   const [autoRead, setAutoRead] = useState(false)
+  const [allowSelfPaced, setAllowSelfPaced] = useState(false)
+  const [passingScore, setPassingScore] = useState(60)
   const [questions, setQuestions] = useState<Question[]>([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -164,6 +166,8 @@ export default function CreateQuizPage() {
           team_mode: teamMode,
           max_teams: teamMode ? maxTeams : 2,
           auto_read: autoRead,
+          allow_self_paced: allowSelfPaced,
+          passing_score: passingScore,
         })
         .select()
         .single()
@@ -217,7 +221,7 @@ export default function CreateQuizPage() {
               type="text"
               value={quizName}
               onChange={(e) => setQuizName(e.target.value)}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci"
               placeholder="เช่น ควิซประวัติศาสตร์โลก"
             />
           </div>
@@ -228,7 +232,7 @@ export default function CreateQuizPage() {
               value={quizDescription}
               onChange={(e) => setQuizDescription(e.target.value)}
               rows={3}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci"
               placeholder="คำอธิบายสั้นๆ เกี่ยวกับควิซของคุณ"
             />
           </div>
@@ -248,7 +252,7 @@ export default function CreateQuizPage() {
                 id="autoAdvanceEnabled"
                 checked={autoAdvanceEnabled}
                 onChange={(e) => setAutoAdvanceEnabled(e.target.checked)}
-                className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 rounded focus:ring-purple-500 flex-shrink-0"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-ci rounded focus:ring-ci flex-shrink-0"
               />
               <label htmlFor="autoAdvanceEnabled" className="ml-2 text-gray-700 text-sm sm:text-base font-semibold">
                 ⏱️ เปิดใช้งานตัวจับเวลาอัตโนมัติ
@@ -256,7 +260,7 @@ export default function CreateQuizPage() {
             </div>
 
             {autoAdvanceEnabled && (
-              <div className="ml-7 pl-3 border-l-4 border-purple-200">
+              <div className="ml-7 pl-3 border-l-4 border-ci-200">
                 <label className="block text-gray-700 text-sm sm:text-base font-medium mb-2">
                   เวลาเลื่อนอัตโนมัติ
                 </label>
@@ -267,10 +271,10 @@ export default function CreateQuizPage() {
                     max="30"
                     value={autoAdvanceTime}
                     onChange={(e) => setAutoAdvanceTime(parseInt(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-ci"
                   />
                   <div className="w-20 text-center flex-shrink-0">
-                    <span className="text-base sm:text-lg font-bold text-purple-600">{autoAdvanceTime} วิ</span>
+                    <span className="text-base sm:text-lg font-bold text-ci">{autoAdvanceTime} วิ</span>
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-500 mt-2">
@@ -292,7 +296,7 @@ export default function CreateQuizPage() {
               id="isPublic"
               checked={isPublic}
               onChange={(e) => setIsPublic(e.target.checked)}
-              className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 rounded focus:ring-purple-500 flex-shrink-0"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-ci rounded focus:ring-ci flex-shrink-0"
             />
             <label htmlFor="isPublic" className="ml-2 text-gray-700 text-sm sm:text-base">
               ทำให้ควิซนี้เป็นสาธารณะ (ใครก็สามารถเล่นได้)
@@ -307,7 +311,7 @@ export default function CreateQuizPage() {
                 id="teamMode"
                 checked={teamMode}
                 onChange={(e) => setTeamMode(e.target.checked)}
-                className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 rounded focus:ring-purple-500 flex-shrink-0"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-ci rounded focus:ring-ci flex-shrink-0"
               />
               <label htmlFor="teamMode" className="ml-2 text-gray-700 text-sm sm:text-base font-semibold">
                 🏆 เปิดใช้งานโหมดทีม
@@ -315,14 +319,14 @@ export default function CreateQuizPage() {
             </div>
 
             {teamMode && (
-              <div className="ml-7 pl-3 border-l-4 border-purple-200">
+              <div className="ml-7 pl-3 border-l-4 border-ci-200">
                 <label className="block text-gray-700 text-sm sm:text-base font-medium mb-2">
                   จำนวนทีม
                 </label>
                 <select
                   value={maxTeams}
                   onChange={(e) => setMaxTeams(parseInt(e.target.value))}
-                  className="w-full sm:w-48 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                  className="w-full sm:w-48 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci bg-white"
                 >
                   <option value={2}>2 ทีม</option>
                   <option value={3}>3 ทีม</option>
@@ -343,7 +347,7 @@ export default function CreateQuizPage() {
                 id="autoRead"
                 checked={autoRead}
                 onChange={(e) => setAutoRead(e.target.checked)}
-                className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 rounded focus:ring-purple-500 flex-shrink-0"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-ci rounded focus:ring-ci flex-shrink-0"
               />
               <label htmlFor="autoRead" className="ml-2 text-gray-700 text-sm sm:text-base font-semibold">
                 🔊 อ่านคำถามออกเสียงอัตโนมัติ
@@ -352,6 +356,59 @@ export default function CreateQuizPage() {
             <p className="text-xs sm:text-sm text-gray-500 mt-2 ml-7">
               AI จะอ่านคำถามแต่ละข้อออกเสียงโดยอัตโนมัติ
             </p>
+          </div>
+
+          {/* Self-Paced Mode */}
+          <div className="border-t pt-4 mt-2">
+            <div className="flex items-center mb-3">
+              <input
+                type="checkbox"
+                id="allowSelfPaced"
+                checked={allowSelfPaced}
+                onChange={(e) => setAllowSelfPaced(e.target.checked)}
+                className="w-4 h-4 sm:w-5 sm:h-5 text-ci rounded focus:ring-ci flex-shrink-0"
+              />
+              <label htmlFor="allowSelfPaced" className="ml-2 text-gray-700 text-sm sm:text-base font-semibold">
+                🎯 เปิดใช้งานโหมดเล่นเอง (Self-Paced)
+              </label>
+            </div>
+
+            {allowSelfPaced && (
+              <div className="ml-7 pl-3 border-l-4 border-ci-200">
+                <label className="block text-gray-700 text-sm sm:text-base font-medium mb-2">
+                  คะแนนผ่าน (%)
+                </label>
+                <div className="flex items-center gap-2 sm:gap-4">
+                  <input
+                    type="range"
+                    min="50"
+                    max="100"
+                    step="5"
+                    value={passingScore}
+                    onChange={(e) => setPassingScore(parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-ci"
+                  />
+                  <div className="w-20 text-center flex-shrink-0">
+                    <span className="text-base sm:text-lg font-bold text-ci">{passingScore}%</span>
+                  </div>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-500 mt-2">
+                  ✅ ผู้เล่นต้องได้คะแนนอย่างน้อย {passingScore}% เพื่อรับใบรับรอง
+                </p>
+                <div className="mt-3 p-3 bg-ci-50 rounded-lg">
+                  <p className="text-xs sm:text-sm text-ci-700">
+                    <strong>โหมดเล่นเอง:</strong> ผู้เล่นสามารถเข้าเล่นควิซได้โดยไม่ต้องรอ Host เริ่มเกม
+                    เหมาะสำหรับการฝึกอบรมหรือทดสอบความรู้แบบอิสระ
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!allowSelfPaced && (
+              <p className="text-xs sm:text-sm text-gray-500 ml-7">
+                ผู้เล่นต้องรอ Host เริ่มเกมจึงจะเล่นได้
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -364,7 +421,7 @@ export default function CreateQuizPage() {
             <AIQuizGenerator onQuestionsGenerated={handleAIQuestionsGenerated} />
             <button
               onClick={addQuestion}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition active:scale-95"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-ci text-white px-4 py-2 rounded-lg hover:bg-ci-700 transition active:scale-95"
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -377,7 +434,7 @@ export default function CreateQuizPage() {
         {questions.map((question, qIndex) => (
           <div key={question.id} className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-base sm:text-lg font-semibold text-purple-700">คำถามที่ {qIndex + 1}</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-ci-700">คำถามที่ {qIndex + 1}</h3>
               <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                 <button
                   onClick={() => moveQuestion(qIndex, 'up')}
@@ -412,7 +469,7 @@ export default function CreateQuizPage() {
                   value={question.body}
                   onChange={(e) => updateQuestion(qIndex, 'body', e.target.value)}
                   rows={2}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci"
                   placeholder="ใส่คำถามของคุณ..."
                 />
               </div>
@@ -426,7 +483,7 @@ export default function CreateQuizPage() {
                     onChange={(e) => updateQuestion(qIndex, 'time_limit', parseInt(e.target.value))}
                     min="5"
                     max="60"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci"
                   />
                 </div>
                 <div>
@@ -438,7 +495,7 @@ export default function CreateQuizPage() {
                     min="100"
                     max="5000"
                     step="100"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci"
                   />
                 </div>
               </div>
@@ -489,7 +546,7 @@ export default function CreateQuizPage() {
             <p className="text-gray-500 mb-4 text-sm sm:text-base">ยังไม่มีคำถาม เริ่มเพิ่มคำถามในควิซของคุณเลย!</p>
             <button
               onClick={addQuestion}
-              className="bg-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg hover:bg-purple-700 transition active:scale-95"
+              className="bg-ci text-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg hover:bg-ci-700 transition active:scale-95"
             >
               เพิ่มคำถามแรก
             </button>
@@ -508,7 +565,7 @@ export default function CreateQuizPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition disabled:opacity-50 active:scale-95"
+          className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-ci text-white font-bold rounded-lg hover:bg-ci-700 transition disabled:opacity-50 active:scale-95"
         >
           {saving ? 'กำลังบันทึก...' : 'บันทึกควิซ'}
         </button>

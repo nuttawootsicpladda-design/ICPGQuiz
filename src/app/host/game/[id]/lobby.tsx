@@ -81,16 +81,6 @@ export default function Lobby({
     >
       <SoundControl />
 
-      {/* Music button - shows until music is started */}
-      {!musicStarted && (
-        <button
-          onClick={startMusic}
-          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full shadow-2xl hover:from-purple-700 hover:to-pink-700 transition z-50 flex items-center gap-3 animate-bounce text-lg font-bold"
-        >
-          🎵 คลิกเพื่อเปิดเพลง
-        </button>
-      )}
-
       <div className="flex flex-col lg:flex-row justify-center gap-6 m-auto bg-white bg-opacity-95 backdrop-blur-lg p-6 sm:p-8 rounded-2xl shadow-2xl border-2 sm:border-4 border-orange-400 w-full max-w-5xl">
         {/* Left Column: Players List */}
         <div className="w-full lg:w-80 xl:w-96">

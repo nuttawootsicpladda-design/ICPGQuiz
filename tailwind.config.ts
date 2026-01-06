@@ -9,6 +9,23 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        // Corporate Identity - สีน้ำเงิน ICPG
+        // RGB: 0, 79, 159 | Pantone 286 C
+        ci: {
+          DEFAULT: '#004F9F',
+          50: '#E6F0FA',
+          100: '#CCE0F5',
+          200: '#99C2EB',
+          300: '#66A3E0',
+          400: '#3385D6',
+          500: '#004F9F',
+          600: '#00478F',
+          700: '#003F7F',
+          800: '#00376F',
+          900: '#002F5F',
+        },
+      },
       fontFamily: {
         sans: ['Montserrat', 'sans-serif'],
       },

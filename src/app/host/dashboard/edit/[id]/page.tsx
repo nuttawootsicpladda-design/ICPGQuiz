@@ -269,7 +269,7 @@ export default function EditQuizPage() {
               type="text"
               value={quizName}
               onChange={(e) => setQuizName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
               placeholder="เช่น ควิซประวัติศาสตร์โลก"
             />
           </div>
@@ -280,7 +280,7 @@ export default function EditQuizPage() {
               value={quizDescription}
               onChange={(e) => setQuizDescription(e.target.value)}
               rows={3}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
               placeholder="คำอธิบายสั้นๆ เกี่ยวกับควิซของคุณ"
             />
           </div>
@@ -292,7 +292,7 @@ export default function EditQuizPage() {
                 id="autoAdvanceEnabled"
                 checked={autoAdvanceEnabled}
                 onChange={(e) => setAutoAdvanceEnabled(e.target.checked)}
-                className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 rounded focus:ring-purple-500 flex-shrink-0"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-ci rounded focus:ring-ci-500 flex-shrink-0"
               />
               <label htmlFor="autoAdvanceEnabled" className="ml-2 text-gray-700 text-sm sm:text-base font-semibold">
                 ⏱️ เปิดใช้งานตัวจับเวลาอัตโนมัติ
@@ -300,7 +300,7 @@ export default function EditQuizPage() {
             </div>
 
             {autoAdvanceEnabled && (
-              <div className="ml-7 pl-3 border-l-4 border-purple-200">
+              <div className="ml-7 pl-3 border-l-4 border-ci-200">
                 <label className="block text-gray-700 text-sm sm:text-base font-medium mb-2">
                   เวลาเลื่อนอัตโนมัติ
                 </label>
@@ -311,10 +311,10 @@ export default function EditQuizPage() {
                     max="30"
                     value={autoAdvanceTime}
                     onChange={(e) => setAutoAdvanceTime(parseInt(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-ci"
                   />
                   <div className="w-20 text-center flex-shrink-0">
-                    <span className="text-base sm:text-lg font-bold text-purple-600">{autoAdvanceTime} วิ</span>
+                    <span className="text-base sm:text-lg font-bold text-ci">{autoAdvanceTime} วิ</span>
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-500 mt-2">
@@ -336,7 +336,7 @@ export default function EditQuizPage() {
               id="isPublic"
               checked={isPublic}
               onChange={(e) => setIsPublic(e.target.checked)}
-              className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
+              className="w-5 h-5 text-ci rounded focus:ring-ci-500"
             />
             <label htmlFor="isPublic" className="ml-2 text-gray-700">
               ทำให้ควิซนี้เป็นสาธารณะ (ใครก็สามารถเล่นได้)
@@ -351,7 +351,7 @@ export default function EditQuizPage() {
                 id="teamMode"
                 checked={teamMode}
                 onChange={(e) => setTeamMode(e.target.checked)}
-                className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
+                className="w-5 h-5 text-ci rounded focus:ring-ci-500"
               />
               <label htmlFor="teamMode" className="ml-2 text-gray-700 font-semibold">
                 🏆 เปิดใช้งานโหมดทีม
@@ -359,14 +359,14 @@ export default function EditQuizPage() {
             </div>
 
             {teamMode && (
-              <div className="ml-7 pl-3 border-l-4 border-purple-200">
+              <div className="ml-7 pl-3 border-l-4 border-ci-200">
                 <label className="block text-gray-700 font-medium mb-2">
                   จำนวนทีม
                 </label>
                 <select
                   value={maxTeams}
                   onChange={(e) => setMaxTeams(parseInt(e.target.value))}
-                  className="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                  className="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500 bg-white"
                 >
                   <option value={2}>2 ทีม</option>
                   <option value={3}>3 ทีม</option>
@@ -387,7 +387,7 @@ export default function EditQuizPage() {
                 id="autoRead"
                 checked={autoRead}
                 onChange={(e) => setAutoRead(e.target.checked)}
-                className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
+                className="w-5 h-5 text-ci rounded focus:ring-ci-500"
               />
               <label htmlFor="autoRead" className="ml-2 text-gray-700 font-semibold">
                 🔊 อ่านคำถามออกเสียงอัตโนมัติ
@@ -406,7 +406,7 @@ export default function EditQuizPage() {
           <h2 className="text-xl font-bold">คำถาม ({questions.length})</h2>
           <button
             onClick={addQuestion}
-            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
+            className="flex items-center gap-2 bg-ci text-white px-4 py-2 rounded-lg hover:bg-ci-700 transition"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -418,7 +418,7 @@ export default function EditQuizPage() {
         {questions.map((question, qIndex) => (
           <div key={question.id} className="bg-white rounded-lg shadow-md p-6 mb-4">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-lg font-semibold text-purple-700">คำถามที่ {qIndex + 1}</h3>
+              <h3 className="text-lg font-semibold text-ci-700">คำถามที่ {qIndex + 1}</h3>
               <div className="flex gap-2">
                 <button
                   onClick={() => moveQuestion(qIndex, 'up')}
@@ -453,7 +453,7 @@ export default function EditQuizPage() {
                   value={question.body}
                   onChange={(e) => updateQuestion(qIndex, 'body', e.target.value)}
                   rows={2}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
                   placeholder="ใส่คำถามของคุณ..."
                 />
               </div>
@@ -467,7 +467,7 @@ export default function EditQuizPage() {
                     onChange={(e) => updateQuestion(qIndex, 'time_limit', parseInt(e.target.value))}
                     min="5"
                     max="60"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
                   />
                 </div>
                 <div>
@@ -479,7 +479,7 @@ export default function EditQuizPage() {
                     min="100"
                     max="5000"
                     step="100"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500"
                   />
                 </div>
               </div>
@@ -530,7 +530,7 @@ export default function EditQuizPage() {
             <p className="text-gray-500 mb-4">ยังไม่มีคำถาม เริ่มเพิ่มคำถามในควิซของคุณเลย!</p>
             <button
               onClick={addQuestion}
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition"
+              className="bg-ci text-white px-6 py-3 rounded-lg hover:bg-ci-700 transition"
             >
               เพิ่มคำถามแรก
             </button>
@@ -549,7 +549,7 @@ export default function EditQuizPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition disabled:opacity-50"
+          className="px-6 py-3 bg-ci text-white font-bold rounded-lg hover:bg-ci-700 transition disabled:opacity-50"
         >
           {saving ? 'กำลังบันทึก...' : 'อัปเดตควิซ'}
         </button>

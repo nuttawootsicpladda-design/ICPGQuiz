@@ -115,7 +115,7 @@ export default function ProfilePage() {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500 text-sm sm:text-base"
                 placeholder="สมชาย ใจดี"
               />
             </div>
@@ -128,7 +128,7 @@ export default function ProfilePage() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500 text-sm sm:text-base"
                 placeholder="somchai"
               />
             </div>
@@ -141,7 +141,7 @@ export default function ProfilePage() {
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 rows={4}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500 text-sm sm:text-base"
                 placeholder="บอกเล่าเกี่ยวกับตัวคุณ..."
               />
             </div>
@@ -149,7 +149,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full bg-purple-600 text-white font-bold py-2.5 sm:py-3 px-4 rounded-lg hover:bg-purple-700 transition disabled:opacity-50 text-sm sm:text-base"
+              className="w-full bg-ci text-white font-bold py-2.5 sm:py-3 px-4 rounded-lg hover:bg-ci-700 transition disabled:opacity-50 text-sm sm:text-base"
             >
               {saving ? 'กำลังบันทึก...' : 'บันทึกโปรไฟล์'}
             </button>

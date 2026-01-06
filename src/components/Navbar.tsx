@@ -17,7 +17,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg">
+    <nav className="bg-gradient-to-r from-ci-700 to-ci-500 text-white shadow-lg">
       <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
         <div className="flex justify-between items-center">
           <Link href="/host/dashboard" className="text-xl sm:text-2xl font-bold hover:opacity-90">
@@ -50,7 +50,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/host/dashboard/create"
-                  className="px-3 lg:px-4 py-2 bg-white text-purple-600 font-semibold rounded-lg hover:bg-opacity-90 transition text-sm lg:text-base"
+                  className="px-3 lg:px-4 py-2 bg-white text-ci font-semibold rounded-lg hover:bg-opacity-90 transition text-sm lg:text-base"
                 >
                   สร้างควิซ
                 </Link>
@@ -60,7 +60,7 @@ export default function Navbar() {
                     onClick={() => setShowMenu(!showMenu)}
                     className="flex items-center gap-2 px-2 lg:px-3 py-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition"
                   >
-                    <div className="w-7 h-7 lg:w-8 lg:h-8 bg-white text-purple-600 rounded-full flex items-center justify-center font-bold text-sm lg:text-base">
+                    <div className="w-7 h-7 lg:w-8 lg:h-8 bg-white text-ci rounded-full flex items-center justify-center font-bold text-sm lg:text-base">
                       {user.email?.charAt(0).toUpperCase()}
                     </div>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,7 +109,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="px-3 lg:px-4 py-2 bg-white text-purple-600 font-semibold rounded-lg hover:bg-opacity-90 transition text-sm lg:text-base"
+                  className="px-3 lg:px-4 py-2 bg-white text-ci font-semibold rounded-lg hover:bg-opacity-90 transition text-sm lg:text-base"
                 >
                   สมัครสมาชิก
                 </Link>
@@ -124,7 +124,7 @@ export default function Navbar() {
             {user && !(user as any).is_anonymous && (
               <div className="space-y-2">
                 <div className="flex items-center gap-3 px-3 py-2 bg-white/10 rounded-lg">
-                  <div className="w-8 h-8 bg-white text-purple-600 rounded-full flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 bg-white text-ci rounded-full flex items-center justify-center font-bold">
                     {user.email?.charAt(0).toUpperCase()}
                   </div>
                   <span className="text-sm truncate flex-1">{user.email}</span>
@@ -180,7 +180,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block px-3 py-2 bg-white text-purple-600 font-semibold rounded-lg hover:bg-opacity-90 transition text-center"
+                  className="block px-3 py-2 bg-white text-ci font-semibold rounded-lg hover:bg-opacity-90 transition text-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   สมัครสมาชิก

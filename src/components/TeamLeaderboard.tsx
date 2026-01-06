@@ -105,10 +105,10 @@ export default function TeamLeaderboard({
   return (
     <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6">
+      <div className="bg-gradient-to-r from-ci-700 to-ci-500 text-white p-6">
         <h2 className="text-3xl font-bold mb-2">Team Leaderboard</h2>
         {currentQuestionIndex !== undefined && totalQuestions !== undefined && (
-          <p className="text-purple-100">
+          <p className="text-ci-100">
             Question {currentQuestionIndex + 1} of {totalQuestions}
           </p>
         )}

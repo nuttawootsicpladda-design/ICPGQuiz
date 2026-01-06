@@ -47,7 +47,7 @@ export default function LoginPage() {
         <button
           onClick={handleMicrosoftLogin}
           disabled={loading}
-          className="w-full py-3 sm:py-4 px-3 sm:px-4 border-none rounded-[10px] bg-gradient-to-r from-[#6a11cb] to-[#2575fc] text-white text-base sm:text-lg md:text-[1.3em] font-bold cursor-pointer transition-all duration-300 tracking-[1px] hover:from-[#2575fc] hover:to-[#6a11cb] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 sm:gap-3"
+          className="w-full py-3 sm:py-4 px-3 sm:px-4 border-none rounded-[10px] bg-gradient-to-r from-ci-700 to-ci-500 text-white text-base sm:text-lg md:text-[1.3em] font-bold cursor-pointer transition-all duration-300 tracking-[1px] hover:from-ci-500 hover:to-ci-700 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 sm:gap-3"
         >
           <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
@@ -60,7 +60,7 @@ export default function LoginPage() {
 
         <Link
           href="/game"
-          className="block mt-4 sm:mt-6 text-[#007bff] no-underline text-sm sm:text-base transition-colors duration-200 hover:text-[#0056b3] hover:underline"
+          className="block mt-4 sm:mt-6 text-ci no-underline text-sm sm:text-base transition-colors duration-200 hover:text-ci-700 hover:underline"
         >
           เข้าร่วมเกมในฐานะผู้เล่น
         </Link>

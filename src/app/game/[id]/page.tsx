@@ -162,7 +162,7 @@ export default function Home({
   // Show loading while restoring participant
   if (isLoading) {
     return (
-      <main className="bg-green-500 min-h-screen flex items-center justify-center">
+      <main className="bg-ci min-h-screen flex items-center justify-center">
         <div className="text-white text-2xl font-bold animate-pulse">
           Loading...
         </div>
@@ -172,7 +172,7 @@ export default function Home({
 
   return (
     <ErrorBoundary>
-      <main className="bg-green-500 min-h-screen">
+      <main className="bg-ci min-h-screen">
         {currentScreen == Screens.lobby && (
           <Lobby
             onRegisterCompleted={onRegisterCompleted}
@@ -246,7 +246,7 @@ function Results({ participant }: { participant: Participant }) {
   const showConfetti = myRank <= 3
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 px-4 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-ci-700 via-ci-500 to-ci-400 px-4 py-6">
       {showConfetti && <Confetti width={width} height={height} recycle={false} numberOfPieces={500} />}
 
       <div className="text-center mb-6">
@@ -256,11 +256,11 @@ function Results({ participant }: { participant: Participant }) {
           </h2>
           <div className="flex items-center justify-center gap-6 mt-4">
             <div className="text-center">
-              <div className="text-4xl font-bold text-purple-600">{myScore}</div>
+              <div className="text-4xl font-bold text-ci">{myScore}</div>
               <div className="text-sm text-gray-600">Points</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-pink-600">#{myRank}</div>
+              <div className="text-4xl font-bold text-ci-400">#{myRank}</div>
               <div className="text-sm text-gray-600">Rank</div>
             </div>
           </div>
@@ -304,7 +304,7 @@ function Results({ participant }: { participant: Participant }) {
 
               {/* Score */}
               <div className="pl-4 flex-shrink-0 text-right">
-                <div className={`${index < 3 ? 'text-2xl' : 'text-xl'} font-bold text-purple-600`}>
+                <div className={`${index < 3 ? 'text-2xl' : 'text-xl'} font-bold text-ci`}>
                   {result.total_score}
                 </div>
                 <div className="text-xs text-gray-600">points</div>

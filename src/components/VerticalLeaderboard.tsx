@@ -126,7 +126,7 @@ export default function VerticalLeaderboard({
         }
       `}</style>
 
-      <div className="bg-gradient-to-br from-purple-900/90 to-indigo-900/90 backdrop-blur-md rounded-2xl shadow-2xl border-4 border-yellow-400/30 overflow-hidden">
+      <div className="bg-gradient-to-br from-ci-900/90 to-ci-800/90 backdrop-blur-md rounded-2xl shadow-2xl border-4 border-yellow-400/30 overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-4">
           <h3 className="text-white text-2xl sm:text-3xl font-black text-center flex items-center justify-center gap-3">
@@ -170,7 +170,7 @@ export default function VerticalLeaderboard({
                       className={`flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center font-black text-xl sm:text-2xl ${
                         isTopThree
                           ? 'bg-white text-gray-800'
-                          : 'bg-purple-700 text-white'
+                          : 'bg-ci-700 text-white'
                       } ${
                         result.animationState === 'up' ? 'rank-badge-up' :
                         result.animationState === 'down' ? 'rank-badge-down' : ''
@@ -182,7 +182,7 @@ export default function VerticalLeaderboard({
                     {/* Avatar */}
                     <div className="flex-shrink-0">
                       <div className={`rounded-full ${
-                        isTopThree ? 'ring-4 ring-white' : 'ring-2 ring-purple-400'
+                        isTopThree ? 'ring-4 ring-white' : 'ring-2 ring-ci-400'
                       }`}>
                         <AvatarDisplay
                           avatarId={(participant as any)?.avatar_id}
@@ -243,7 +243,7 @@ export default function VerticalLeaderboard({
 
         {/* Footer - Show if there are more results */}
         {rankedResults.length > maxDisplay && (
-          <div className="bg-purple-800/50 px-4 py-3 text-center">
+          <div className="bg-ci-800/50 px-4 py-3 text-center">
             <p className="text-white/70 text-sm">
               +{rankedResults.length - maxDisplay} more players
             </p>

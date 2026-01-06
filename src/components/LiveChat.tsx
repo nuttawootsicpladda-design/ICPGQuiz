@@ -143,9 +143,9 @@ export default function LiveChat({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border-2 border-purple-400">
+    <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border-2 border-ci-400">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-3 rounded-t-lg">
+      <div className="bg-gradient-to-r from-ci-700 to-ci-500 text-white px-4 py-3 rounded-t-lg">
         <h3 className="font-bold text-lg flex items-center gap-2">
           💬 Live Chat
           <span className="text-xs bg-white bg-opacity-20 px-2 py-1 rounded-full">
@@ -182,14 +182,14 @@ export default function LiveChat({
                 {/* Message Bubble */}
                 <div className={`flex flex-col ${isMyMessage ? 'items-end' : 'items-start'} max-w-[70%]`}>
                   <span className={`text-xs font-semibold mb-1 ${
-                    isMyMessage ? 'text-purple-600' : 'text-gray-600'
+                    isMyMessage ? 'text-ci' : 'text-gray-600'
                   }`}>
                     {participant?.nickname || 'Unknown'}
                   </span>
                   <div
                     className={`px-4 py-2 rounded-lg ${
                       isMyMessage
-                        ? 'bg-purple-600 text-white rounded-br-none'
+                        ? 'bg-ci text-white rounded-br-none'
                         : 'bg-white border-2 border-gray-200 text-gray-800 rounded-bl-none'
                     }`}
                   >
@@ -218,13 +218,13 @@ export default function LiveChat({
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
             maxLength={200}
-            className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ci-500 focus:border-transparent"
             disabled={sending}
           />
           <button
             type="submit"
             disabled={!newMessage.trim() || sending}
-            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+            className="bg-ci text-white px-6 py-2 rounded-lg hover:bg-ci-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
           >
             {sending ? '...' : 'Send'}
           </button>

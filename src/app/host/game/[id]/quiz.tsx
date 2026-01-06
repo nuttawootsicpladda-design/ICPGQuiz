@@ -250,7 +250,7 @@ export default function Quiz({
         )}
 
         {isAnswerRevealed && countdown !== null && countdown > 0 && (
-          <div className="bg-purple-600 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-lg font-bold text-sm sm:text-base md:text-lg flex items-center gap-2">
+          <div className="bg-ci text-white px-3 sm:px-4 py-1 sm:py-2 rounded-lg font-bold text-sm sm:text-base md:text-lg flex items-center gap-2">
             <span>⏱️</span>
             <span>{countdown}s</span>
           </div>

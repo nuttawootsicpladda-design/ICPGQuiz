@@ -107,7 +107,7 @@ export default function Results({
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-yellow-400 mb-4 drop-shadow-lg">
             Leaderboard
           </h1>
-          <p className="text-purple-200 text-sm md:text-base max-w-2xl mx-auto">
+          <p className="text-ci-200 text-sm md:text-base max-w-2xl mx-auto">
             {quizSet.name}
           </p>
         </div>
@@ -119,15 +119,15 @@ export default function Results({
               {/* 2nd Place */}
               {topThree[1] && (
                 <div className="flex flex-col items-center">
-                  <div className="text-purple-300 text-xl md:text-2xl font-bold mb-2">2</div>
+                  <div className="text-ci-300 text-xl md:text-2xl font-bold mb-2">2</div>
                   <div className="relative mb-4">
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 p-1 shadow-xl">
-                      <div className="w-full h-full rounded-full bg-purple-800 flex items-center justify-center overflow-hidden">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-ci-400 to-ci-600 p-1 shadow-xl">
+                      <div className="w-full h-full rounded-full bg-ci-800 flex items-center justify-center overflow-hidden">
                         <AvatarDisplay avatarId={getParticipantAvatar(topThree[1].participant_id)} size="lg" />
                       </div>
                     </div>
                   </div>
-                  <div className="text-purple-200 text-sm md:text-base mb-1">@{topThree[1].nickname}</div>
+                  <div className="text-ci-200 text-sm md:text-base mb-1">@{topThree[1].nickname}</div>
                   <div className="text-yellow-400 text-xl md:text-2xl font-bold">{topThree[1].total_score}</div>
                 </div>
               )}
@@ -138,7 +138,7 @@ export default function Results({
                   <div className="text-6xl mb-2">👑</div>
                   <div className="relative mb-4">
                     <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 p-1 shadow-2xl">
-                      <div className="w-full h-full rounded-full bg-purple-800 flex items-center justify-center overflow-hidden">
+                      <div className="w-full h-full rounded-full bg-ci-800 flex items-center justify-center overflow-hidden">
                         <AvatarDisplay avatarId={getParticipantAvatar(topThree[0].participant_id)} size="xl" />
                       </div>
                     </div>
@@ -151,15 +151,15 @@ export default function Results({
               {/* 3rd Place */}
               {topThree[2] && (
                 <div className="flex flex-col items-center">
-                  <div className="text-purple-300 text-xl md:text-2xl font-bold mb-2">3</div>
+                  <div className="text-ci-300 text-xl md:text-2xl font-bold mb-2">3</div>
                   <div className="relative mb-4">
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 p-1 shadow-xl">
-                      <div className="w-full h-full rounded-full bg-purple-800 flex items-center justify-center overflow-hidden">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-ci-400 to-ci-600 p-1 shadow-xl">
+                      <div className="w-full h-full rounded-full bg-ci-800 flex items-center justify-center overflow-hidden">
                         <AvatarDisplay avatarId={getParticipantAvatar(topThree[2].participant_id)} size="lg" />
                       </div>
                     </div>
                   </div>
-                  <div className="text-purple-200 text-sm md:text-base mb-1">@{topThree[2].nickname}</div>
+                  <div className="text-ci-200 text-sm md:text-base mb-1">@{topThree[2].nickname}</div>
                   <div className="text-yellow-400 text-xl md:text-2xl font-bold">{topThree[2].total_score}</div>
                 </div>
               )}
@@ -186,17 +186,17 @@ export default function Results({
             {restResults.map((gameResult, index) => (
               <div
                 key={gameResult.participant_id}
-                className="bg-gradient-to-r from-purple-600/80 to-purple-700/80 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-4 shadow-lg hover:shadow-xl transition-shadow border border-purple-400/30"
+                className="bg-gradient-to-r from-ci/80 to-ci-700/80 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-4 shadow-lg hover:shadow-xl transition-shadow border border-ci-400/30"
               >
                 {/* Rank */}
-                <div className="w-8 h-8 bg-purple-800/50 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-ci-800/50 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold">{index + 4}</span>
                 </div>
 
                 {/* Avatar */}
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 p-0.5">
-                    <div className="w-full h-full rounded-full bg-purple-800 flex items-center justify-center overflow-hidden">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-ci-400 to-ci-600 p-0.5">
+                    <div className="w-full h-full rounded-full bg-ci-800 flex items-center justify-center overflow-hidden">
                       <AvatarDisplay avatarId={getParticipantAvatar(gameResult.participant_id)} size="sm" />
                     </div>
                   </div>
