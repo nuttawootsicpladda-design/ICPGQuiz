@@ -32,6 +32,7 @@ export default function DashboardPage() {
       .from('quiz_sets')
       .select(`*, questions(*, choices(*))`)
       .eq('user_id', user.id)
+      .neq('name', '__burnout_placeholder__')
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -154,6 +155,15 @@ export default function DashboardPage() {
             </svg>
             <span className="hidden xs:inline">สร้างควิซ</span>
             <span className="xs:hidden">สร้าง</span>
+          </Link>
+
+          <Link
+            href="/host/dashboard/burnout"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition font-semibold text-sm sm:text-base"
+          >
+            <span>🔥</span>
+            <span className="hidden xs:inline">แบบประเมิน Burnout</span>
+            <span className="xs:hidden">Burnout</span>
           </Link>
         </div>
       </div>

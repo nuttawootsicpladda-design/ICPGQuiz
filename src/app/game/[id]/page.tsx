@@ -9,6 +9,9 @@ import Confetti from 'react-confetti'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import { AvatarDisplay } from '@/components/AvatarPicker'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import BurnoutLobbyPlayer from './burnout-lobby'
+import BurnoutSurvey from './burnout-survey'
+import BurnoutComplete from './burnout-complete'
 
 enum Screens {
   lobby = 'lobby',
@@ -35,6 +38,19 @@ export default function Home({
   const [currentQuestionSequence, setCurrentQuestionSequence] = useState(0)
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
 
+  // Detect if this game is a burnout survey
+  const [isBurnout, setIsBurnout] = useState(false)
+
+  const checkBurnoutMode = async () => {
+    const { data } = await (supabase as any)
+      .from('surveys')
+      .select('id')
+      .eq('game_id', gameId)
+      .eq('survey_type', 'burnout')
+      .maybeSingle()
+    setIsBurnout(!!data)
+  }
+
   const getGame = async () => {
     try {
       const { data: game, error } = await supabase
@@ -42,14 +58,14 @@ export default function Home({
         .select()
         .eq('id', gameId)
         .single()
-      
+
       if (error) {
         console.error('Error fetching game:', error)
         return
       }
-      
+
       if (!game) return
-      
+
       setCurrentScreen(game.phase as Screens)
       if (game.phase == Screens.quiz) {
         setCurrentQuestionSequence(game.current_question_sequence)
@@ -90,6 +106,9 @@ export default function Home({
   // Restore participant from localStorage on mount
   useEffect(() => {
     const restoreParticipant = async () => {
+      // Check burnout mode first
+      await checkBurnoutMode()
+
       const storageKey = `participant_${gameId}`
       const savedParticipantId = localStorage.getItem(storageKey)
 
@@ -138,13 +157,13 @@ export default function Home({
           (payload) => {
             if (!stateRef.current) return
 
-            // start the quiz game
             const game = payload.new as Game
 
-            if (game.phase == 'result') {
-              setCurrentScreen(Screens.results)
-            } else {
-              setCurrentScreen(Screens.quiz)
+            // Set screen based on phase
+            setCurrentScreen(game.phase as Screens)
+
+            // Update quiz-specific state only for quiz phase
+            if (game.phase === 'quiz') {
               setCurrentQuestionSequence(game.current_question_sequence)
               setIsAnswerRevealed(game.is_answer_revealed)
             }
@@ -170,6 +189,33 @@ export default function Home({
     )
   }
 
+  // Burnout survey mode - different UI for each standard phase
+  if (isBurnout) {
+    return (
+      <ErrorBoundary>
+        <main className="bg-ci min-h-screen">
+          {currentScreen == Screens.lobby && (
+            participant ? (
+              <BurnoutLobbyPlayer participant={participant} />
+            ) : (
+              <Lobby onRegisterCompleted={onRegisterCompleted} gameId={gameId} />
+            )
+          )}
+          {currentScreen == Screens.quiz && participant && (
+            <BurnoutSurvey
+              gameId={gameId}
+              participantId={participant.id}
+            />
+          )}
+          {currentScreen == Screens.results && participant && (
+            <BurnoutComplete participant={participant} />
+          )}
+        </main>
+      </ErrorBoundary>
+    )
+  }
+
+  // Normal quiz mode
   return (
     <ErrorBoundary>
       <main className="bg-ci min-h-screen">
