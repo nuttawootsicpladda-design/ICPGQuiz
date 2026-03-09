@@ -128,54 +128,58 @@ export default function BurnoutResults({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ci-700 via-ci-500 to-ci-400 p-4 sm:p-8">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-white text-3xl sm:text-4xl font-bold mb-2">
-          📊 ผลการประเมิน Burnout
-        </h1>
-        <p className="text-white/70">
-          ผู้ตอบแบบประเมิน {uniqueRespondents} คน
-        </p>
-      </div>
-
-      {/* Overall Score */}
-      <div className={`max-w-md mx-auto ${scoreInfo.bg} rounded-2xl p-8 shadow-2xl text-center mb-8`}>
-        <div className="text-sm text-gray-500 mb-2">คะแนนรวม</div>
-        <div className={`text-6xl font-bold ${scoreInfo.text} mb-2`}>
-          {overallScore.toFixed(1)}
-        </div>
-        <div className="text-sm text-gray-500 mb-1">จาก 5.0</div>
-        <div className={`inline-block px-4 py-1 rounded-full text-sm font-bold ${scoreInfo.text} ${scoreInfo.bg} border`}>
-          {scoreInfo.label}
+    <div className="min-h-screen bg-gradient-to-br from-ci-700 via-ci-500 to-ci-400 p-3 sm:p-6">
+      {/* Header + Overall Score - inline */}
+      <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 mb-5">
+        <div className="text-center sm:text-left">
+          <h1 className="text-white text-2xl sm:text-3xl font-bold">
+            📊 ผลการประเมิน Burnout
+          </h1>
+          <p className="text-white/70 text-sm">
+            ผู้ตอบแบบประเมิน {uniqueRespondents} คน
+          </p>
         </div>
 
-        {/* Score scale legend */}
-        <div className="mt-4 flex justify-center gap-1">
-          {[1, 2, 3, 4, 5].map((v) => (
-            <div
-              key={v}
-              className={`w-12 h-2 rounded-full ${
-                v <= Math.round(overallScore)
-                  ? v >= 4 ? 'bg-green-500' : v >= 3 ? 'bg-yellow-500' : v >= 2 ? 'bg-orange-500' : 'bg-red-500'
-                  : 'bg-gray-200'
-              }`}
-            />
-          ))}
+        {/* Overall Score - compact */}
+        <div className={`${scoreInfo.bg} rounded-xl px-6 py-3 shadow-xl flex items-center gap-4`}>
+          <div className="text-center">
+            <div className="text-xs text-gray-500">คะแนนรวม</div>
+            <div className={`text-4xl font-bold ${scoreInfo.text}`}>
+              {overallScore.toFixed(1)}
+            </div>
+            <div className="text-xs text-gray-500">จาก 5.0</div>
+          </div>
+          <div className="flex flex-col items-center gap-1.5">
+            <div className={`px-3 py-0.5 rounded-full text-xs font-bold ${scoreInfo.text} ${scoreInfo.bg} border`}>
+              {scoreInfo.label}
+            </div>
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map((v) => (
+                <div
+                  key={v}
+                  className={`w-6 h-1.5 rounded-full ${
+                    v <= Math.round(overallScore)
+                      ? v >= 4 ? 'bg-green-500' : v >= 3 ? 'bg-yellow-500' : v >= 2 ? 'bg-orange-500' : 'bg-red-500'
+                      : 'bg-gray-200'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Per-question Charts */}
-      <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {questions.map((question, i) => {
           const { aggregated, maxCount } = getQuestionAggregation(question.id)
           return (
-            <div key={question.id} className="bg-white rounded-2xl p-5 shadow-xl">
-              <div className="text-xs text-gray-400 mb-1">คำถามที่ {i + 1}</div>
-              <h3 className="text-sm font-bold text-gray-800 mb-4 min-h-[3rem]">
+            <div key={question.id} className="bg-white rounded-xl p-4 shadow-xl">
+              <div className="text-xs text-gray-400 mb-0.5">คำถามที่ {i + 1}</div>
+              <h3 className="text-xs font-bold text-gray-800 mb-3 min-h-[2.5rem] leading-relaxed">
                 {question.question_text}
               </h3>
-              <BurnoutChart aggregated={aggregated} maxCount={maxCount} />
+              <BurnoutChart aggregated={aggregated} maxCount={maxCount} compact />
             </div>
           )
         })}
@@ -183,26 +187,26 @@ export default function BurnoutResults({
 
       {/* Revealed Mode: Individual Breakdown */}
       {identityMode === 'revealed' && (
-        <div className="max-w-4xl mx-auto mb-8">
+        <div className="max-w-5xl mx-auto mb-6">
           <button
             onClick={() => setShowBreakdown(!showBreakdown)}
-            className="w-full bg-white/10 backdrop-blur text-white font-bold py-3 px-6 rounded-xl hover:bg-white/20 transition mb-4"
+            className="w-full bg-white/10 backdrop-blur text-white font-bold py-2.5 px-6 rounded-xl hover:bg-white/20 transition mb-3 text-sm"
           >
             {showBreakdown ? 'ซ่อนรายละเอียดรายบุคคล ▲' : 'แสดงรายละเอียดรายบุคคล ▼'}
           </button>
 
           {showBreakdown && (
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-white rounded-xl shadow-xl overflow-hidden">
               <table className="w-full">
                 <thead>
                   <tr className="bg-gray-50">
-                    <th className="text-left py-3 px-4 text-sm font-bold text-gray-700">
+                    <th className="text-left py-2 px-3 text-xs font-bold text-gray-700">
                       ชื่อ
                     </th>
                     {questions.map((_, i) => (
                       <th
                         key={i}
-                        className="text-center py-3 px-4 text-sm font-bold text-gray-700"
+                        className="text-center py-2 px-3 text-xs font-bold text-gray-700"
                       >
                         Q{i + 1}
                       </th>
@@ -212,11 +216,11 @@ export default function BurnoutResults({
                 <tbody>
                   {getParticipantBreakdown().map((row) => (
                     <tr key={row.participantId} className="border-t border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 font-medium text-gray-800 text-sm">
+                      <td className="py-2 px-3 font-medium text-gray-800 text-xs">
                         {row.nickname}
                       </td>
                       {row.answers.map((answer, i) => (
-                        <td key={i} className="text-center py-3 px-4 text-2xl">
+                        <td key={i} className="text-center py-2 px-3 text-xl">
                           {answer.emoji}
                         </td>
                       ))}
@@ -230,10 +234,10 @@ export default function BurnoutResults({
       )}
 
       {/* Back button */}
-      <div className="text-center">
+      <div className="text-center pb-4">
         <button
           onClick={() => window.close()}
-          className="bg-white/20 text-white font-bold px-8 py-3 rounded-xl hover:bg-white/30 transition"
+          className="bg-white/20 text-white font-bold px-6 py-2 rounded-xl hover:bg-white/30 transition text-sm"
         >
           ปิดหน้านี้
         </button>
