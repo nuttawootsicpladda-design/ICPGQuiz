@@ -1,7 +1,7 @@
 'use client'
 
 import { Participant, supabase } from '@/types/types'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import BurnoutChart from '@/components/BurnoutChart'
 
 const EMOJI_LEVELS = [
@@ -42,6 +42,9 @@ export default function BurnoutActive({
 }) {
   const currentQuestion = questions[currentQuestionIndex]
   const [responses, setResponses] = useState<SurveyResponse[]>([])
+  const autoAdvancedRef = useRef(false)
+
+  const participantCount = participants.length
 
   useEffect(() => {
     if (!currentQuestion) return
@@ -83,10 +86,33 @@ export default function BurnoutActive({
     }
   }, [currentQuestion?.id])
 
-  if (!currentQuestion) return null
+  // Auto-advance when all participants have answered
+  useEffect(() => {
+    if (participantCount > 0 && responses.length >= participantCount && !autoAdvancedRef.current) {
+      autoAdvancedRef.current = true
+      const timer = setTimeout(() => {
+        if (currentQuestionIndex < questions.length - 1) {
+          supabase
+            .from('games')
+            .update({ current_question_sequence: currentQuestionIndex + 1 } as any)
+            .eq('id', gameId)
+        } else {
+          supabase
+            .from('games')
+            .update({ phase: 'result' } as any)
+            .eq('id', gameId)
+        }
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [responses.length, participantCount, currentQuestionIndex, questions.length, gameId])
 
-  // Filter out host from participant count
-  const participantCount = participants.length
+  // Reset auto-advance flag when question changes
+  useEffect(() => {
+    autoAdvancedRef.current = false
+  }, [currentQuestion?.id])
+
+  if (!currentQuestion) return null
 
   // Aggregate responses for chart
   const aggregated = EMOJI_LEVELS.map((level) => ({

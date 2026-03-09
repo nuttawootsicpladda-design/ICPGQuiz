@@ -23,10 +23,9 @@ export default function BurnoutChart({
     <div className={compact ? 'space-y-2' : 'space-y-3'}>
       {aggregated.map((item) => (
         <div key={item.value} className={`flex items-center ${compact ? 'gap-2' : 'gap-3'}`}>
-          {/* Emoji + Label */}
-          <div className={`flex items-center gap-1.5 flex-shrink-0 ${compact ? 'w-20' : 'w-28'}`}>
+          {/* Emoji */}
+          <div className="flex-shrink-0">
             <span className={compact ? 'text-lg' : 'text-2xl'}>{item.emoji}</span>
-            <span className={`text-gray-600 hidden sm:inline ${compact ? 'text-xs' : 'text-sm'}`}>{item.label}</span>
           </div>
 
           {/* Bar */}

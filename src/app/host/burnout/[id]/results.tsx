@@ -72,10 +72,10 @@ export default function BurnoutResults({
     : 0
 
   const getScoreColor = (score: number) => {
-    if (score >= 4) return { text: 'text-green-600', bg: 'bg-green-50', label: 'สุขภาพดี' }
-    if (score >= 3) return { text: 'text-yellow-600', bg: 'bg-yellow-50', label: 'ปานกลาง' }
-    if (score >= 2) return { text: 'text-orange-600', bg: 'bg-orange-50', label: 'น่าเป็นห่วง' }
-    return { text: 'text-red-600', bg: 'bg-red-50', label: 'ต้องดูแลเร่งด่วน' }
+    if (score >= 4) return { text: 'text-green-600', bg: 'bg-green-50', label: 'สุขภาพดี', emoji: '😄' }
+    if (score >= 3) return { text: 'text-yellow-600', bg: 'bg-yellow-50', label: 'ปานกลาง', emoji: '😐' }
+    if (score >= 2) return { text: 'text-orange-600', bg: 'bg-orange-50', label: 'น่าเป็นห่วง', emoji: '😟' }
+    return { text: 'text-red-600', bg: 'bg-red-50', label: 'ต้องดูแลเร่งด่วน', emoji: '😫' }
   }
 
   const scoreInfo = getScoreColor(overallScore)
@@ -150,6 +150,7 @@ export default function BurnoutResults({
             <div className="text-xs text-gray-500">จาก 5.0</div>
           </div>
           <div className="flex flex-col items-center gap-1.5">
+            <div className="text-3xl">{scoreInfo.emoji}</div>
             <div className={`px-3 py-0.5 rounded-full text-xs font-bold ${scoreInfo.text} ${scoreInfo.bg} border`}>
               {scoreInfo.label}
             </div>

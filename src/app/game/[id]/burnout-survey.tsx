@@ -4,11 +4,11 @@ import { supabase } from '@/types/types'
 import { useEffect, useState } from 'react'
 
 const EMOJI_LEVELS = [
-  { emoji: '😄', label: 'ดีมาก', value: '5', color: 'bg-green-500', hoverColor: 'hover:bg-green-50', borderColor: 'border-green-500' },
-  { emoji: '🙂', label: 'ดี', value: '4', color: 'bg-lime-500', hoverColor: 'hover:bg-lime-50', borderColor: 'border-lime-500' },
-  { emoji: '😐', label: 'ปานกลาง', value: '3', color: 'bg-yellow-500', hoverColor: 'hover:bg-yellow-50', borderColor: 'border-yellow-500' },
-  { emoji: '😟', label: 'น่าเป็นห่วง', value: '2', color: 'bg-orange-500', hoverColor: 'hover:bg-orange-50', borderColor: 'border-orange-500' },
   { emoji: '😫', label: 'เหนื่อยมาก', value: '1', color: 'bg-red-500', hoverColor: 'hover:bg-red-50', borderColor: 'border-red-500' },
+  { emoji: '😟', label: 'น่าเป็นห่วง', value: '2', color: 'bg-orange-500', hoverColor: 'hover:bg-orange-50', borderColor: 'border-orange-500' },
+  { emoji: '😐', label: 'ปานกลาง', value: '3', color: 'bg-yellow-500', hoverColor: 'hover:bg-yellow-50', borderColor: 'border-yellow-500' },
+  { emoji: '🙂', label: 'ดี', value: '4', color: 'bg-lime-500', hoverColor: 'hover:bg-lime-50', borderColor: 'border-lime-500' },
+  { emoji: '😄', label: 'ดีมาก', value: '5', color: 'bg-green-500', hoverColor: 'hover:bg-green-50', borderColor: 'border-green-500' },
 ]
 
 interface SurveyQuestion {
