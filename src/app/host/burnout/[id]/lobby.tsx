@@ -39,7 +39,7 @@ export default function BurnoutLobby({
     playSound('start')
     const { error } = await supabase
       .from('games')
-      .update({ phase: 'quiz', current_question_sequence: 0 } as any)
+      .update({ phase: 'result' } as any)
       .eq('id', gameId)
     if (error) {
       alert(error.message)
@@ -52,7 +52,7 @@ export default function BurnoutLobby({
         {/* Left Column: Players List */}
         <div className="w-full lg:w-80 xl:w-96">
           <h2 className="text-2xl sm:text-3xl font-bold text-orange-600 mb-2">
-            🔥 Burnout Assessment
+            R U O K
           </h2>
           <p className="text-gray-500 text-sm mb-4">รอผู้เข้าร่วมสแกน QR Code...</p>
 

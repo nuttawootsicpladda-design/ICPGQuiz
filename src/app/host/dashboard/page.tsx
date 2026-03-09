@@ -162,8 +162,8 @@ export default function DashboardPage() {
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition font-semibold text-sm sm:text-base"
           >
             <span>🔥</span>
-            <span className="hidden xs:inline">แบบประเมิน Burnout</span>
-            <span className="xs:hidden">Burnout</span>
+            <span className="hidden xs:inline">แบบประเมิน R U O K</span>
+            <span className="xs:hidden">R U O K</span>
           </Link>
         </div>
       </div>

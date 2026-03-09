@@ -15,7 +15,7 @@ export default function BurnoutLobbyPlayer({
           สวัสดี {participant.nickname}!
         </h2>
         <p className="text-gray-600 mb-6">
-          คุณเข้าร่วมแบบประเมิน Burnout แล้ว
+          คุณเข้าร่วมแบบประเมิน R U O K แล้ว
         </p>
         <div className="bg-orange-50 rounded-xl p-5">
           <div className="text-3xl mb-2 animate-bounce">⏳</div>

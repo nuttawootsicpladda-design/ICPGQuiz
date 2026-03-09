@@ -3,7 +3,6 @@
 import { Participant, supabase } from '@/types/types'
 import { useEffect, useState } from 'react'
 import BurnoutLobby from './lobby'
-import BurnoutActive from './active'
 import BurnoutResults from './results'
 
 // Use standard game phases (DB constraint: 'lobby', 'quiz', 'result')
@@ -148,17 +147,7 @@ export default function HostBurnoutPage({
       {currentPhase === Phase.lobby && (
         <BurnoutLobby participants={participants} gameId={gameId} />
       )}
-      {currentPhase === Phase.active && questions.length > 0 && (
-        <BurnoutActive
-          gameId={gameId}
-          surveyId={surveyData?.id || ''}
-          questions={questions}
-          currentQuestionIndex={currentQuestionIndex}
-          participants={participants}
-          identityMode={identityMode}
-        />
-      )}
-      {currentPhase === Phase.result && (
+      {(currentPhase === Phase.active || currentPhase === Phase.result) && (
         <BurnoutResults
           gameId={gameId}
           surveyId={surveyData?.id || ''}

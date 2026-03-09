@@ -156,14 +156,7 @@ export default function BurnoutSurvey({
                   : `bg-white border-gray-200 ${level.hoverColor}`
               }`}
             >
-              <span className="text-3xl sm:text-4xl mb-1">{level.emoji}</span>
-              <span
-                className={`text-xs font-medium ${
-                  selectedValue === level.value ? 'text-white' : 'text-gray-600'
-                }`}
-              >
-                {level.label}
-              </span>
+              <span className="text-3xl sm:text-4xl">{level.emoji}</span>
             </button>
           ))}
         </div>

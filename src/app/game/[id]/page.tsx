@@ -201,14 +201,11 @@ export default function Home({
               <Lobby onRegisterCompleted={onRegisterCompleted} gameId={gameId} />
             )
           )}
-          {currentScreen == Screens.quiz && participant && (
+          {(currentScreen == Screens.quiz || currentScreen == Screens.results) && participant && (
             <BurnoutSurvey
               gameId={gameId}
               participantId={participant.id}
             />
-          )}
-          {currentScreen == Screens.results && participant && (
-            <BurnoutComplete participant={participant} />
           )}
         </main>
       </ErrorBoundary>
