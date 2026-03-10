@@ -52,32 +52,15 @@ export default function BurnoutLobby({
         {/* Left Column: Players List */}
         <div className="w-full lg:w-80 xl:w-96">
           <h2 className="text-2xl sm:text-3xl font-bold text-orange-600 mb-2">
-            R U O K
+            R U OK ?
           </h2>
           <p className="text-gray-500 text-sm mb-4">รอผู้เข้าร่วมสแกน QR Code...</p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 pb-6 min-h-32 gap-2 sm:gap-3 max-h-96 overflow-y-auto">
-            {participants.map((participant) => (
-              <div
-                className="flex items-center gap-2 p-2 sm:p-3 bg-white rounded-lg shadow-md animate-bounce-in"
-                key={participant.id}
-              >
-                <AvatarDisplay
-                  avatarId={(participant as any).avatar_id}
-                  size="sm"
-                />
-                <span className="text-base sm:text-lg font-semibold text-gray-800 truncate">
-                  {participant.nickname}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-gray-700 text-center mb-4 sm:mb-6 bg-orange-100 py-3 rounded-lg">
+          <div className="text-gray-700 text-center mb-4 sm:mb-6 bg-orange-100 py-5 rounded-lg">
+            <p className="text-4xl sm:text-5xl font-bold text-orange-600 mb-1">
+              {participants.length}
+            </p>
             <p className="text-lg sm:text-xl font-semibold">
-              <span className="text-2xl sm:text-3xl font-bold text-orange-600">
-                {participants.length}
-              </span>{' '}
               คนเข้าร่วมแล้ว
             </p>
           </div>
