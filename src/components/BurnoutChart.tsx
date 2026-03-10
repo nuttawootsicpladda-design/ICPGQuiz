@@ -33,7 +33,7 @@ export default function BurnoutChart({
             <div
               className={`h-full ${item.color} rounded-full transition-all duration-700 ease-out flex items-center justify-end pr-2`}
               style={{
-                width: `${total > 0 ? (item.count / total) * 100 : 0}%`,
+                width: `${maxCount > 0 ? (item.count / maxCount) * 100 : 0}%`,
                 minWidth: item.count > 0 ? '2rem' : '0',
               }}
             >
