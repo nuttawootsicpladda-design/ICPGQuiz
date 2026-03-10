@@ -154,7 +154,7 @@ export default function BurnoutResults({
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 mb-5">
         <div className="text-center sm:text-left">
           <h1 className="text-white text-2xl sm:text-3xl font-bold">
-            📊 ผลการประเมิน R U O K
+            📊 ผลการประเมิน R U OK ?
           </h1>
           <p className="text-white/70 text-sm">
             ผู้ตอบแบบประเมิน {uniqueRespondents} คน

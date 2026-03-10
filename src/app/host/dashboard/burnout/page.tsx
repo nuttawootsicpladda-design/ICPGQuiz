@@ -121,7 +121,7 @@ export default function BurnoutDashboardPage() {
         .from('surveys')
         .insert({
           user_id: user.id,
-          title: `R U O K - ${new Date().toLocaleDateString('th-TH')}`,
+          title: `R U OK ? - ${new Date().toLocaleDateString('th-TH')}`,
           description: JSON.stringify({ identity_mode: identityMode }),
           survey_type: 'burnout',
           game_id: game.id,
@@ -179,7 +179,7 @@ export default function BurnoutDashboardPage() {
   return (
     <div className="px-2 sm:px-0">
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">แบบประเมิน R U O K</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">แบบประเมิน R U OK ?</h1>
         <p className="text-sm sm:text-base text-gray-600 mt-1">
           ประเมินสุขภาพจิตของทีมด้วย 3 คำถาม พร้อมผลลัพธ์แบบ Realtime
         </p>
@@ -253,7 +253,7 @@ export default function BurnoutDashboardPage() {
           disabled={creating}
           className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg active:scale-95"
         >
-          {creating ? 'กำลังสร้าง...' : 'เริ่มแบบประเมิน R U O K 🚀'}
+          {creating ? 'กำลังสร้าง...' : 'เริ่มแบบประเมิน R U OK ? 🚀'}
         </button>
       </div>
 

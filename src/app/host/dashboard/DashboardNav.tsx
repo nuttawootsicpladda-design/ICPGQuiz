@@ -32,7 +32,7 @@ const menuItems = [
     ),
   },
   {
-    label: 'R U O K',
+    label: 'R U OK ?',
     href: '/host/dashboard/burnout',
     icon: (
       <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
