@@ -11,7 +11,6 @@ import { AvatarDisplay } from '@/components/AvatarPicker'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import BurnoutLobbyPlayer from './burnout-lobby'
 import BurnoutSurvey from './burnout-survey'
-import BurnoutComplete from './burnout-complete'
 
 enum Screens {
   lobby = 'lobby',
@@ -40,15 +39,27 @@ export default function Home({
 
   // Detect if this game is a burnout survey
   const [isBurnout, setIsBurnout] = useState(false)
+  const [burnoutIdentityMode, setBurnoutIdentityMode] = useState<'anonymous' | 'revealed'>('anonymous')
 
-  const checkBurnoutMode = async () => {
+  const checkBurnoutMode = async (): Promise<{ isBurnout: boolean; identityMode: 'anonymous' | 'revealed' }> => {
     const { data } = await (supabase as any)
       .from('surveys')
-      .select('id')
+      .select('id, description')
       .eq('game_id', gameId)
       .eq('survey_type', 'burnout')
       .maybeSingle()
-    setIsBurnout(!!data)
+    const found = !!data
+    setIsBurnout(found)
+    let mode: 'anonymous' | 'revealed' = 'anonymous'
+    if (data) {
+      try {
+        mode = JSON.parse(data.description || '{}').identity_mode || 'anonymous'
+      } catch {
+        mode = 'anonymous'
+      }
+      setBurnoutIdentityMode(mode)
+    }
+    return { isBurnout: found, identityMode: mode }
   }
 
   const getGame = async () => {
@@ -107,7 +118,7 @@ export default function Home({
   useEffect(() => {
     const restoreParticipant = async () => {
       // Check burnout mode first
-      await checkBurnoutMode()
+      const { isBurnout: isBurnoutMode, identityMode } = await checkBurnoutMode()
 
       const storageKey = `participant_${gameId}`
       const savedParticipantId = localStorage.getItem(storageKey)
@@ -123,13 +134,30 @@ export default function Home({
 
         if (!error && participantData) {
           setParticipant(participantData)
-          // Get game state to restore correct screen
           await getGame()
+          setIsLoading(false)
+          return
         } else {
-          // Participant not found - clear localStorage
           localStorage.removeItem(storageKey)
         }
       }
+
+      // Auto-register for anonymous burnout mode
+      if (isBurnoutMode && identityMode === 'anonymous') {
+        const anonName = `ผู้ร่วมประเมิน`
+        const { data: newParticipant, error } = await supabase
+          .from('participants')
+          .insert({ game_id: gameId, nickname: anonName } as any)
+          .select()
+          .single()
+
+        if (!error && newParticipant) {
+          setParticipant(newParticipant)
+          localStorage.setItem(storageKey, newParticipant.id)
+          await getGame()
+        }
+      }
+
       setIsLoading(false)
     }
 
@@ -196,7 +224,7 @@ export default function Home({
         <main className="bg-ci min-h-screen">
           {currentScreen == Screens.lobby && (
             participant ? (
-              <BurnoutLobbyPlayer participant={participant} />
+              <BurnoutLobbyPlayer participant={participant} isAnonymous={burnoutIdentityMode === 'anonymous'} />
             ) : (
               <Lobby onRegisterCompleted={onRegisterCompleted} gameId={gameId} />
             )
