@@ -45,6 +45,9 @@ export default function BurnoutDashboardPage() {
   const [pastSurveys, setPastSurveys] = useState<PastSurvey[]>([])
   const [creating, setCreating] = useState(false)
   const [loadingSurveys, setLoadingSurveys] = useState(true)
+  const [editableQuestions, setEditableQuestions] = useState(
+    BURNOUT_QUESTIONS.map((q) => q.text)
+  )
 
   useEffect(() => {
     if (!loading && !user) {
@@ -136,14 +139,14 @@ export default function BurnoutDashboardPage() {
         return
       }
 
-      // 4. Create the 3 survey questions
-      for (const q of BURNOUT_QUESTIONS) {
+      // 4. Create the survey questions from editable text
+      for (let i = 0; i < editableQuestions.length; i++) {
         await (supabase as any).from('survey_questions').insert({
           survey_id: survey.id,
-          question_text: q.text,
-          question_type: q.type,
+          question_text: editableQuestions[i],
+          question_type: 'emoji_scale',
           options: EMOJI_OPTIONS,
-          order_index: q.order_index,
+          order_index: i,
           is_required: true,
         })
       }
@@ -224,16 +227,27 @@ export default function BurnoutDashboardPage() {
           </div>
         </div>
 
-        {/* Preview Questions */}
-        <div className="mb-6 bg-gray-50 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-gray-600 mb-3">คำถามในแบบประเมิน (3 ข้อ)</h3>
-          <div className="space-y-2">
-            {BURNOUT_QUESTIONS.map((q, i) => (
-              <div key={i} className="flex items-start gap-2 text-sm">
-                <span className="bg-orange-100 text-orange-700 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 font-bold text-xs">
+        {/* Editable Questions */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            คำถามในแบบประเมิน ({editableQuestions.length} ข้อ)
+          </label>
+          <div className="space-y-3">
+            {editableQuestions.map((text, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="bg-orange-100 text-orange-700 rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 font-bold text-sm mt-2">
                   {i + 1}
                 </span>
-                <span className="text-gray-700">{q.text}</span>
+                <textarea
+                  value={text}
+                  onChange={(e) => {
+                    const updated = [...editableQuestions]
+                    updated[i] = e.target.value
+                    setEditableQuestions(updated)
+                  }}
+                  rows={2}
+                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent resize-none"
+                />
               </div>
             ))}
           </div>
